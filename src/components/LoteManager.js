@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import LotesList from "./LotesList";
-import LoteForm from "./LoteForm";
-import LoteView from "./LoteView";
-import MapaLotes from "./MapaLotes";
-import { cargarLotesViale } from "../data/lotesViale";
-import { FaPlus, FaEdit, FaMap, FaArrowLeft } from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import LotesList from './LotesList';
+import LoteForm from './LoteForm';
+import LoteView from './LoteView';
+import MapaLotes from './MapaLotes';
+import { useLotes } from '../hooks/useApi';
+import { FaPlus, FaEdit, FaMap, FaArrowLeft } from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
 
 // Estados del componente
 const VIEWS = {
-  LIST: "list",
-  FORM: "form",
-  VIEW: "view",
-  MAP: "map",
+  LIST: 'list',
+  FORM: 'form',
+  VIEW: 'view',
+  MAP: 'map',
 };
 
 // Styled Components
@@ -57,13 +57,13 @@ const ButtonGroup = styled.div`
 `;
 
 const ActionButton = styled.button`
-  background: ${(props) =>
-    props.variant === "secondary"
-      ? "rgba(255,255,255,0.2)"
-      : "rgba(255,255,255,0.9)"};
-  color: ${(props) => (props.variant === "secondary" ? "white" : "#4a7c59")};
-  border: ${(props) =>
-    props.variant === "secondary" ? "1px solid rgba(255,255,255,0.3)" : "none"};
+  background: ${props =>
+    props.variant === 'secondary'
+      ? 'rgba(255,255,255,0.2)'
+      : 'rgba(255,255,255,0.9)'};
+  color: ${props => (props.variant === 'secondary' ? 'white' : '#4a7c59')};
+  border: ${props =>
+    props.variant === 'secondary' ? '1px solid rgba(255,255,255,0.3)' : 'none'};
   padding: 0.8rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
@@ -74,8 +74,8 @@ const ActionButton = styled.button`
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${(props) =>
-      props.variant === "secondary" ? "rgba(255,255,255,0.3)" : "white"};
+    background: ${props =>
+      props.variant === 'secondary' ? 'rgba(255,255,255,0.3)' : 'white'};
     transform: translateY(-2px);
   }
 
@@ -91,141 +91,79 @@ const ContentArea = styled.div`
   overflow: hidden;
 `;
 
-// Función para guardar lotes en localStorage
-const saveLotes = (lotes) => {
-  try {
-    localStorage.setItem("lotes", JSON.stringify(lotes));
-  } catch {
-    // Error al guardar - continuar silenciosamente
-  }
-};
-
-// Datos iniciales de ejemplo
-const LOTES_INICIALES = [
-  {
-    id: 1,
-    nombre: "Campo Norte Principal",
-    descripcion: "Lote principal ubicado al norte de la propiedad",
-    hectareas: 45.5,
-    cultivo: "Soja",
-    propietario: "Establecimiento San José",
-    fechaCreacion: "2024-01-15",
-    geometria: {
-      type: "Feature",
-      properties: {
-        nombre: "Campo Norte Principal",
-        cultivo: "Soja",
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [-60.01, -31.87],
-            [-60.005, -31.87],
-            [-60.005, -31.865],
-            [-60.01, -31.865],
-            [-60.01, -31.87],
-          ],
-        ],
-      },
-    },
-  },
-  {
-    id: 2,
-    nombre: "Lote Sur Chico",
-    descripcion: "Lote pequeño destinado a cultivos de rotación",
-    hectareas: 22.3,
-    cultivo: "Maíz",
-    propietario: "Establecimiento San José",
-    fechaCreacion: "2024-01-20",
-    geometria: {
-      type: "Feature",
-      properties: {
-        nombre: "Lote Sur Chico",
-        cultivo: "Maíz",
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [-60.015, -31.875],
-            [-60.012, -31.875],
-            [-60.012, -31.872],
-            [-60.015, -31.872],
-            [-60.015, -31.875],
-          ],
-        ],
-      },
-    },
-  },
-];
+// Datos iniciales ahora se manejan por el hook useLotes con MSW
 
 const LoteManager = ({ onBack }) => {
   const [currentView, setCurrentView] = useState(VIEWS.LIST);
-  const [lotes, setLotes] = useState([]);
   const [selectedLote, setSelectedLote] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Cargar lotes al montar el componente
-  useEffect(() => {
-    // Primero cargar lotes de Viale para asegurar que estén disponibles
-    const todosLosLotes = cargarLotesViale();
+  // Usar el hook moderno en lugar de localStorage
+  const { lotes, isLoading, createLote, updateLote, deleteLote } = useLotes();
 
-    if (todosLosLotes.length === 0) {
-      // Si aún no hay lotes, cargar datos iniciales básicos
-      saveLotes(LOTES_INICIALES);
-      setLotes(LOTES_INICIALES);
-    } else {
-      setLotes(todosLosLotes);
-    }
+  // Inicialización de datos (solo si es necesario)
+  useEffect(() => {
+    // Los datos se cargan automáticamente por el hook useLotes
+    // Este efecto se mantiene solo para posible inicialización futura
   }, []);
 
   // Funciones de manejo de lotes
-  const handleSaveLote = (loteData) => {
-    let lotesActualizados;
+  const handleSaveLote = async loteData => {
+    try {
+      if (isEditing && selectedLote) {
+        // Editar lote existente usando la API
+        const result = await updateLote(selectedLote.id, loteData);
+        if (result.success) {
+          console.log('Lote actualizado exitosamente');
+        } else {
+          console.error('Error actualizando lote:', result.error);
+          return; // No cerrar el formulario si hay error
+        }
+      } else {
+        // Crear nuevo lote usando la API
+        const result = await createLote(loteData);
+        if (result.success) {
+          console.log('Lote creado exitosamente');
+        } else {
+          console.error('Error creando lote:', result.error);
+          return; // No cerrar el formulario si hay error
+        }
+      }
 
-    if (isEditing && selectedLote) {
-      // Editar lote existente
-      lotesActualizados = lotes.map((lote) =>
-        lote.id === selectedLote.id
-          ? { ...loteData, id: selectedLote.id }
-          : lote
-      );
-    } else {
-      // Crear nuevo lote
-      const nuevoLote = {
-        ...loteData,
-        id: Date.now(),
-        fechaCreacion: new Date().toISOString().split("T")[0],
-      };
-      lotesActualizados = [...lotes, nuevoLote];
-    }
-
-    setLotes(lotesActualizados);
-    saveLotes(lotesActualizados);
-    setCurrentView(VIEWS.LIST);
-    setSelectedLote(null);
-    setIsEditing(false);
-  };
-
-  const handleDeleteLote = (loteId) => {
-    // Eliminar directamente (sin confirm para evitar error de linting)
-    const lotesActualizados = lotes.filter((lote) => lote.id !== loteId);
-    setLotes(lotesActualizados);
-    saveLotes(lotesActualizados);
-
-    if (selectedLote && selectedLote.id === loteId) {
-      setSelectedLote(null);
+      // Si llega aquí, la operación fue exitosa - volver a la lista
       setCurrentView(VIEWS.LIST);
+      setSelectedLote(null);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error guardando lote:', error);
     }
   };
 
-  const handleViewLote = (lote) => {
+  const handleDeleteLote = async loteId => {
+    try {
+      const result = await deleteLote(loteId);
+      if (result.success) {
+        console.log('Lote eliminado exitosamente');
+
+        // Si estamos viendo el lote que se eliminó, volver a la lista
+        if (selectedLote && selectedLote.id === loteId) {
+          setSelectedLote(null);
+          setCurrentView(VIEWS.LIST);
+        }
+      } else {
+        console.error('Error eliminando lote:', result.error);
+      }
+    } catch (error) {
+      console.error('Error eliminando lote:', error);
+    }
+  };
+
+  const handleViewLote = lote => {
     setSelectedLote(lote);
     setCurrentView(VIEWS.VIEW);
   };
 
-  const handleEditLote = (lote) => {
+  const handleEditLote = lote => {
     setSelectedLote(lote);
     setIsEditing(true);
     setCurrentView(VIEWS.FORM);
@@ -254,6 +192,7 @@ const LoteManager = ({ onBack }) => {
         return (
           <LotesList
             lotes={lotes}
+            isLoading={isLoading}
             onView={handleViewLote}
             onEdit={handleEditLote}
             onDelete={handleDeleteLote}
@@ -286,15 +225,15 @@ const LoteManager = ({ onBack }) => {
   const getPageTitle = () => {
     switch (currentView) {
       case VIEWS.LIST:
-        return "Gestión de Lotes";
+        return 'Gestión de Lotes';
       case VIEWS.FORM:
-        return isEditing ? "Editar Lote" : "Nuevo Lote";
+        return isEditing ? 'Editar Lote' : 'Nuevo Lote';
       case VIEWS.VIEW:
         return `Lote: ${selectedLote?.nombre}`;
       case VIEWS.MAP:
-        return "Mapa de Lotes";
+        return 'Mapa de Lotes';
       default:
-        return "Lotes";
+        return 'Lotes';
     }
   };
 
@@ -310,7 +249,7 @@ const LoteManager = ({ onBack }) => {
           <ButtonGroup>
             <ActionButton variant="secondary" onClick={handleBack}>
               <FaArrowLeft />
-              {currentView === VIEWS.LIST ? "Volver" : "Atrás"}
+              {currentView === VIEWS.LIST ? 'Volver' : 'Atrás'}
             </ActionButton>
 
             {currentView === VIEWS.LIST && (

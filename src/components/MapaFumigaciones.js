@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React, { useState, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useFumigaciones } from '../hooks/useApi';
 import {
   MapContainer,
   TileLayer,
@@ -9,27 +10,27 @@ import {
   LayerGroup,
   Circle,
   Tooltip,
-} from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+} from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import {
   FaMapMarkerAlt,
   FaEye,
   FaInfoCircle,
   FaCheckCircle,
   FaClock,
-} from "react-icons/fa";
-import { GiSpray } from "react-icons/gi";
+} from 'react-icons/fa';
+import { GiSpray } from 'react-icons/gi';
 
 // Fix para iconos de Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
 // Styled Components
@@ -79,8 +80,8 @@ const ControlsContainer = styled.div`
 `;
 
 const FilterButton = styled.button`
-  background: ${(props) => (props.active ? "var(--primary-color)" : "white")};
-  color: ${(props) => (props.active ? "white" : "var(--primary-color)")};
+  background: ${props => (props.active ? 'var(--primary-color)' : 'white')};
+  color: ${props => (props.active ? 'white' : 'var(--primary-color)')};
   border: 2px solid var(--primary-color);
   padding: 0.5rem 1rem;
   border-radius: 25px;
@@ -168,7 +169,7 @@ const ColorIndicator = styled.div`
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: ${(props) => props.color};
+  background: ${props => props.color};
   border: 2px solid white;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
 `;
@@ -220,9 +221,9 @@ const EstadisticaLabel = styled.div`
 `;
 
 // Iconos personalizados para marcadores
-const createCustomIcon = (color, IconComponent) => {
+const createCustomIcon = color => {
   return L.divIcon({
-    className: "custom-marker",
+    className: 'custom-marker',
     html: `
       <div style="
         background: ${color};
@@ -247,133 +248,63 @@ const createCustomIcon = (color, IconComponent) => {
 
 // Colores por estado
 const ESTADO_COLORES = {
-  completada: "#28a745",
-  pendiente: "#ffc107",
-  "en-proceso": "#17a2b8",
-  cancelada: "#dc3545",
+  completada: '#28a745',
+  pendiente: '#ffc107',
+  'en-proceso': '#17a2b8',
+  cancelada: '#dc3545',
 };
 
-// Datos de ejemplo de campos y fumigaciones con coordenadas
-const FUMIGACIONES_EJEMPLO = [
-  {
-    id: 1,
-    campo: "Campo Norte",
-    coordenadas: [-34.6037, -58.3816], // Buenos Aires como ejemplo
-    estado: "completada",
-    tipo: "Herbicida",
-    fecha: "2024-01-15",
-    hectareas: 25,
-    costo: 15000,
-    efectividad: 92,
-  },
-  {
-    id: 2,
-    campo: "Lote Sur",
-    coordenadas: [-34.6118, -58.396],
-    estado: "pendiente",
-    tipo: "Insecticida",
-    fecha: "2024-01-20",
-    hectareas: 18,
-    costo: 12000,
-    efectividad: null,
-  },
-  {
-    id: 3,
-    campo: "Parcela Este",
-    coordenadas: [-34.5958, -58.3734],
-    estado: "en-proceso",
-    tipo: "Fungicida",
-    fecha: "2024-01-18",
-    hectareas: 32,
-    costo: 22000,
-    efectividad: null,
-  },
-  {
-    id: 4,
-    campo: "Campo Oeste",
-    coordenadas: [-34.6158, -58.389],
-    estado: "completada",
-    tipo: "Herbicida",
-    fecha: "2024-01-12",
-    hectareas: 28,
-    costo: 18500,
-    efectividad: 88,
-  },
-  {
-    id: 5,
-    campo: "Lote Central",
-    coordenadas: [-34.608, -58.375],
-    estado: "cancelada",
-    tipo: "Insecticida",
-    fecha: "2024-01-22",
-    hectareas: 15,
-    costo: 9500,
-    efectividad: null,
-  },
-];
+const MapaFumigaciones = () => {
+  const [filtroEstado, setFiltroEstado] = useState('todos');
 
-const MapaFumigaciones = ({ onBack }) => {
-  const [filtroEstado, setFiltroEstado] = useState("todos");
-  const [fumigaciones, setFumigaciones] = useState([]);
+  // Usar el hook moderno en lugar de localStorage
+  const { fumigaciones } = useFumigaciones();
 
-  // Función para cargar datos
-  const cargarDatos = useCallback(() => {
-    const datosReales = JSON.parse(
-      localStorage.getItem("fumigaciones") || "[]"
-    );
-
-    if (datosReales.length > 0) {
-      const datosConCoordenadas = datosReales.map((fumigacion) => ({
-        ...fumigacion,
-        coordenadas: fumigacion.coordenadas || [
-          -34.6037 + (Math.random() - 0.5) * 0.1,
-          -58.3816 + (Math.random() - 0.5) * 0.1,
-        ],
-        hectareas: fumigacion.hectareas || Math.floor(Math.random() * 40) + 10,
-        costo: fumigacion.costo || Math.floor(Math.random() * 30000) + 5000,
-        efectividad:
-          fumigacion.estado === "completada"
-            ? fumigacion.efectividad || Math.floor(Math.random() * 20) + 80
-            : null,
-      }));
-      setFumigaciones(datosConCoordenadas);
-
-      // Solo guardar si se agregaron coordenadas nuevas
-      if (
-        datosConCoordenadas.some(
-          (f) => !localStorage.getItem("fumigaciones").includes('"coordenadas"')
-        )
-      ) {
-        localStorage.setItem(
-          "fumigaciones",
-          JSON.stringify(datosConCoordenadas)
-        );
-      }
-    } else {
-      setFumigaciones(FUMIGACIONES_EJEMPLO);
-    }
-  }, []);
-
-  useEffect(() => {
-    cargarDatos();
-  }, [cargarDatos]);
+  // Procesar fumigaciones para asegurar que tengan coordenadas
+  const fumigacionesConCoordenadas = useMemo(() => {
+    return fumigaciones.map(fumigacion => ({
+      ...fumigacion,
+      coordenadas: fumigacion.coordenadas || [
+        -34.6037 + (Math.random() - 0.5) * 0.1,
+        -58.3816 + (Math.random() - 0.5) * 0.1,
+      ],
+      hectareas: fumigacion.hectareas || Math.floor(Math.random() * 40) + 10,
+      costo: fumigacion.costo || Math.floor(Math.random() * 30000) + 5000,
+      efectividad:
+        fumigacion.estado === 'Completada'
+          ? fumigacion.efectividad || Math.floor(Math.random() * 20) + 80
+          : null,
+    }));
+  }, [fumigaciones]);
 
   // Filtrar fumigaciones por estado
   const fumigacionesFiltradas = useMemo(() => {
-    if (filtroEstado === "todos") {
-      return fumigaciones;
+    if (filtroEstado === 'todos') {
+      return fumigacionesConCoordenadas;
     }
-    return fumigaciones.filter((f) => f.estado === filtroEstado);
-  }, [fumigaciones, filtroEstado]);
+    // Mapear estados del sistema a estados de display
+    const estadoMap = {
+      completada: 'Completada',
+      pendiente: 'Planificada',
+      'en-proceso': 'En Progreso',
+    };
+    const estadoBuscado = estadoMap[filtroEstado] || filtroEstado;
+    return fumigacionesConCoordenadas.filter(f => f.estado === estadoBuscado);
+  }, [fumigacionesConCoordenadas, filtroEstado]);
 
   // Calcular estadísticas
   const estadisticas = useMemo(() => {
-    const completadas = fumigaciones.filter((f) => f.estado === "completada");
-    const totalHectareas = fumigaciones.reduce(
+    const completadas = fumigacionesConCoordenadas.filter(
+      f => f.estado === 'Completada'
+    );
+    const totalHectareas = fumigacionesConCoordenadas.reduce(
       (sum, f) => sum + (f.hectareas || 0),
       0
     );
-    const totalCosto = fumigaciones.reduce((sum, f) => sum + (f.costo || 0), 0);
+    const totalCosto = fumigacionesConCoordenadas.reduce(
+      (sum, f) => sum + (f.costo || 0),
+      0
+    );
     const promedioEfectividad =
       completadas.length > 0
         ? completadas.reduce((sum, f) => sum + (f.efectividad || 0), 0) /
@@ -381,15 +312,15 @@ const MapaFumigaciones = ({ onBack }) => {
         : 0;
 
     return {
-      totalCampos: fumigaciones.length,
+      totalCampos: fumigacionesConCoordenadas.length,
       hectareasTratadas: totalHectareas,
       costoTotal: totalCosto,
       efectividadPromedio: Math.round(promedioEfectividad),
     };
-  }, [fumigaciones]);
+  }, [fumigacionesConCoordenadas]);
 
-  const getMarkerColor = (estado) => {
-    return ESTADO_COLORES[estado] || "#6c757d";
+  const getMarkerColor = estado => {
+    return ESTADO_COLORES[estado] || '#6c757d';
   };
 
   const shouldShowMarker = () => {
@@ -406,32 +337,32 @@ const MapaFumigaciones = ({ onBack }) => {
 
         <ControlsContainer>
           <FilterButton
-            active={filtroEstado === "todos"}
-            onClick={() => setFiltroEstado("todos")}
+            active={filtroEstado === 'todos'}
+            onClick={() => setFiltroEstado('todos')}
           >
             <FaEye />
             Todos
           </FilterButton>
 
           <FilterButton
-            active={filtroEstado === "completada"}
-            onClick={() => setFiltroEstado("completada")}
+            active={filtroEstado === 'completada'}
+            onClick={() => setFiltroEstado('completada')}
           >
             <FaCheckCircle />
             Completadas
           </FilterButton>
 
           <FilterButton
-            active={filtroEstado === "pendiente"}
-            onClick={() => setFiltroEstado("pendiente")}
+            active={filtroEstado === 'pendiente'}
+            onClick={() => setFiltroEstado('pendiente')}
           >
             <FaClock />
             Pendientes
           </FilterButton>
 
           <FilterButton
-            active={filtroEstado === "en-proceso"}
-            onClick={() => setFiltroEstado("en-proceso")}
+            active={filtroEstado === 'en-proceso'}
+            onClick={() => setFiltroEstado('en-proceso')}
           >
             <GiSpray />
             En Proceso
@@ -443,7 +374,7 @@ const MapaFumigaciones = ({ onBack }) => {
         <MapContainer
           center={[-34.6037, -58.3816]}
           zoom={13}
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -451,7 +382,7 @@ const MapaFumigaciones = ({ onBack }) => {
           />
 
           <LayerGroup>
-            {fumigacionesFiltradas.map((fumigacion) => {
+            {fumigacionesFiltradas.map(fumigacion => {
               if (!shouldShowMarker(fumigacion.estado)) {
                 return null;
               }
@@ -463,11 +394,11 @@ const MapaFumigaciones = ({ onBack }) => {
                     icon={createCustomIcon(getMarkerColor(fumigacion.estado))}
                   >
                     <Popup>
-                      <div style={{ minWidth: "200px" }}>
+                      <div style={{ minWidth: '200px' }}>
                         <h3
                           style={{
-                            color: "var(--primary-color)",
-                            margin: "0 0 10px 0",
+                            color: 'var(--primary-color)',
+                            margin: '0 0 10px 0',
                           }}
                         >
                           {fumigacion.campo}
@@ -490,7 +421,7 @@ const MapaFumigaciones = ({ onBack }) => {
                         </p>
                         {fumigacion.efectividad && (
                           <p>
-                            <strong>Efectividad:</strong>{" "}
+                            <strong>Efectividad:</strong>{' '}
                             {fumigacion.efectividad}%
                           </p>
                         )}
@@ -531,7 +462,7 @@ const MapaFumigaciones = ({ onBack }) => {
           </LeyendaItem>
 
           <LeyendaItem>
-            <ColorIndicator color={ESTADO_COLORES["en-proceso"]} />
+            <ColorIndicator color={ESTADO_COLORES['en-proceso']} />
             En Proceso
           </LeyendaItem>
 

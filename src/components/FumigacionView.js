@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { useLotes } from "../hooks/useLotes";
+import { useLotes } from "../hooks/useApi";
 import LotePreview from "./LotePreview";
 import {
   FaTimes,

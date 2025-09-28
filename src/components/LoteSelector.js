@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { useTheme } from "../contexts/ThemeContext";
-import useLotes from "../hooks/useLotes";
+import { useLotes } from "../hooks/useApi";
 import { FaMapMarkedAlt, FaPlus, FaEdit, FaEye } from "react-icons/fa";
 import { GiWheat } from "react-icons/gi";
 import * as turf from "@turf/turf";

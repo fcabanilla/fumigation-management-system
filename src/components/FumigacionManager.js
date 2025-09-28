@@ -1,109 +1,33 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import FumigacionesList from "./FumigacionesList";
-import FumigacionForm from "./FumigacionForm";
-import FumigacionView from "./FumigacionView";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import FumigacionesList from './FumigacionesList';
+import FumigacionForm from './FumigacionForm';
+import FumigacionView from './FumigacionView';
+import { useFumigaciones } from '../hooks/useApi';
 
 // Estados del componente
 const VIEWS = {
-  LIST: "list",
-  FORM: "form",
-  VIEW: "view",
+  LIST: 'list',
+  FORM: 'form',
+  VIEW: 'view',
 };
 
-// Geometrías de ejemplo para trabajos previos
-const getGeometriaEjemplo = (index) => {
-  const geometrias = [
-    // Campo Norte
-    {
-      type: "Feature",
-      properties: { nombre: "Campo Norte", cultivo: "Soja" },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [-58.3816, -34.6037],
-            [-58.38, -34.6037],
-            [-58.38, -34.602],
-            [-58.3816, -34.602],
-            [-58.3816, -34.6037],
-          ],
-        ],
-      },
-    },
-    // Lote Sur
-    {
-      type: "Feature",
-      properties: { nombre: "Lote Sur", cultivo: "Maíz" },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [-58.396, -34.6118],
-            [-58.394, -34.6118],
-            [-58.394, -34.61],
-            [-58.396, -34.61],
-            [-58.396, -34.6118],
-          ],
-        ],
-      },
-    },
-    // Campo Este
-    {
-      type: "Feature",
-      properties: { nombre: "Campo Este", cultivo: "Trigo" },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [-58.375, -34.608],
-            [-58.372, -34.608],
-            [-58.372, -34.605],
-            [-58.375, -34.605],
-            [-58.375, -34.608],
-          ],
-        ],
-      },
-    },
-  ];
-
-  return geometrias[index % geometrias.length];
-};
-
-// Función para cargar fumigaciones desde localStorage
-const getFumigaciones = () => {
-  try {
-    const fumigaciones = localStorage.getItem("fumigaciones");
-    const data = fumigaciones ? JSON.parse(fumigaciones) : [];
-
-    // Si no hay geometrías, agregar algunas de ejemplo
-    return data.map((fumigacion, index) => {
-      if (!fumigacion.geometria) {
-        return {
-          ...fumigacion,
-          geometria: getGeometriaEjemplo(index),
-        };
-      }
-      return fumigacion;
-    });
-  } catch {
-    return [];
-  }
-};
-
-// Función para guardar fumigaciones en localStorage
-const saveFumigaciones = (fumigaciones) => {
-  try {
-    localStorage.setItem("fumigaciones", JSON.stringify(fumigaciones));
-  } catch {
-    // Error al guardar - continuar silenciosamente
-  }
-};
+// FumigacionManager ahora usa la arquitectura moderna con MSW + React Query pattern
 
 const FumigacionManager = ({ onBack, onLogout, user }) => {
   const [currentView, setCurrentView] = useState(VIEWS.LIST);
   const [selectedFumigacion, setSelectedFumigacion] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+
+  // Usar el hook moderno en lugar de localStorage
+  const {
+    fumigaciones,
+    isLoading,
+    loadFumigaciones,
+    createFumigacion,
+    updateFumigacion,
+    deleteFumigacion,
+  } = useFumigaciones();
 
   // Handlers para las diferentes acciones
   const handleNew = () => {
@@ -112,47 +36,65 @@ const FumigacionManager = ({ onBack, onLogout, user }) => {
     setCurrentView(VIEWS.FORM);
   };
 
-  const handleEdit = (fumigacion) => {
+  const handleEdit = fumigacion => {
     setSelectedFumigacion(fumigacion);
     setIsEdit(true);
     setCurrentView(VIEWS.FORM);
   };
 
-  const handleView = (fumigacion) => {
+  const handleView = fumigacion => {
     setSelectedFumigacion(fumigacion);
     setCurrentView(VIEWS.VIEW);
   };
 
-  const handleDelete = (fumigacionId) => {
-    // La eliminación se maneja en el componente FumigacionesList
-    // Este callback se puede usar para refresh o notificaciones
+  const handleDelete = async fumigacionId => {
+    try {
+      const result = await deleteFumigacion(fumigacionId);
+      if (result.success) {
+        // La fumigación se elimina automáticamente del estado por el hook
+        console.log('Fumigación eliminada exitosamente');
+      } else {
+        console.error('Error eliminando fumigación:', result.error);
+        // TODO: Mostrar error al usuario
+      }
+    } catch (error) {
+      console.error('Error eliminando fumigación:', error);
+    }
   };
 
-  const handleSave = (fumigacionData) => {
-    const fumigaciones = getFumigaciones();
+  const handleSave = async fumigacionData => {
+    try {
+      if (isEdit && selectedFumigacion) {
+        // Actualizar fumigación existente usando la API
+        const result = await updateFumigacion(
+          selectedFumigacion.id,
+          fumigacionData
+        );
+        if (result.success) {
+          console.log('Fumigación actualizada exitosamente');
+        } else {
+          console.error('Error actualizando fumigación:', result.error);
+          return; // No cerrar el formulario si hay error
+        }
+      } else {
+        // Crear nueva fumigación usando la API
+        const result = await createFumigacion(fumigacionData);
+        if (result.success) {
+          console.log('Fumigación creada exitosamente');
+        } else {
+          console.error('Error creando fumigación:', result.error);
+          return; // No cerrar el formulario si hay error
+        }
+      }
 
-    if (isEdit && selectedFumigacion) {
-      // Actualizar fumigación existente
-      const updatedFumigaciones = fumigaciones.map((f) =>
-        f.id === selectedFumigacion.id
-          ? { ...fumigacionData, id: selectedFumigacion.id }
-          : f
-      );
-      saveFumigaciones(updatedFumigaciones);
-    } else {
-      // Crear nueva fumigación
-      const newFumigacion = {
-        ...fumigacionData,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-      };
-      saveFumigaciones([...fumigaciones, newFumigacion]);
+      // Si llega aquí, la operación fue exitosa - volver a la lista
+      setCurrentView(VIEWS.LIST);
+      setSelectedFumigacion(null);
+      setIsEdit(false);
+    } catch (error) {
+      console.error('Error guardando fumigación:', error);
+      // TODO: Implementar error boundary o notificación
     }
-
-    // Volver a la lista
-    setCurrentView(VIEWS.LIST);
-    setSelectedFumigacion(null);
-    setIsEdit(false);
   };
 
   const handleCancel = () => {
@@ -191,6 +133,8 @@ const FumigacionManager = ({ onBack, onLogout, user }) => {
     default:
       return (
         <FumigacionesList
+          fumigaciones={fumigaciones}
+          isLoading={isLoading}
           onNew={handleNew}
           onEdit={handleEdit}
           onView={handleView}

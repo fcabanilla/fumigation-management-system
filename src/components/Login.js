@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { FaUser, FaLock, FaLeaf, FaEye, FaEyeSlash } from "react-icons/fa";
-import { GiSpray } from "react-icons/gi";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { FaUser, FaLock, FaLeaf, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { GiSpray } from 'react-icons/gi';
 
 const LoginContainer = styled.div`
   min-height: 100vh;
@@ -14,7 +14,7 @@ const LoginContainer = styled.div`
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -153,7 +153,7 @@ const LoginButton = styled.button`
   gap: 10px;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: -100%;
@@ -213,7 +213,7 @@ const RememberMe = styled.div`
   font-size: 0.9rem;
   color: #666;
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     accent-color: #4a7c59;
   }
 `;
@@ -268,111 +268,104 @@ const FooterText = styled.p`
 
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
     // Limpiar mensajes al empezar a escribir
     if (error) {
-      setError("");
+      setError('');
     }
     if (success) {
-      setSuccess("");
+      setSuccess('');
     }
   };
 
-  const validateEmail = (email) => {
+  const validateEmail = email => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const validateUsername = (username) => {
+  const validateUsername = username => {
     // Al menos 3 caracteres, solo letras, números y algunos caracteres especiales permitidos
     const usernameRegex = /^[a-zA-Z0-9._-]{3,20}$/;
     return usernameRegex.test(username);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     // Validaciones básicas
     if (!formData.username.trim()) {
-      setError("Por favor ingresa tu usuario");
+      setError('Por favor ingresa tu usuario');
       setIsLoading(false);
       return;
     }
 
     // Validar formato de usuario (podría ser email o username)
-    const isEmail = formData.username.includes("@");
+    const isEmail = formData.username.includes('@');
     if (isEmail && !validateEmail(formData.username)) {
-      setError("Por favor ingresa un email válido");
+      setError('Por favor ingresa un email válido');
       setIsLoading(false);
       return;
     }
 
     if (!isEmail && !validateUsername(formData.username)) {
       setError(
-        "El usuario debe tener entre 3-20 caracteres y solo puede contener letras, números, puntos, guiones y guiones bajos"
+        'El usuario debe tener entre 3-20 caracteres y solo puede contener letras, números, puntos, guiones y guiones bajos'
       );
       setIsLoading(false);
       return;
     }
 
     if (!formData.password.trim()) {
-      setError("Por favor ingresa tu contraseña");
+      setError('Por favor ingresa tu contraseña');
       setIsLoading(false);
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+      setError('La contraseña debe tener al menos 6 caracteres');
       setIsLoading(false);
       return;
     }
 
     // Validar que la contraseña tenga al menos una letra y un número
     if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(formData.password)) {
-      setError("La contraseña debe contener al menos una letra y un número");
+      setError('La contraseña debe contener al menos una letra y un número');
       setIsLoading(false);
       return;
     }
 
     try {
-      // Simulación de login (aquí iría tu lógica de autenticación)
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Usar el nuevo sistema de autenticación con MSW
+      const result = await onLogin({
+        username: formData.username,
+        password: formData.password,
+        rememberMe: rememberMe,
+      });
 
-      // Login demo exitoso - aceptar tanto admin como admin@fumigacion.com
-      const validCredentials =
-        (formData.username === "admin" ||
-          formData.username === "admin@fumigacion.com") &&
-        formData.password === "fumigacion123";
-
-      if (validCredentials) {
-        setSuccess("¡Inicio de sesión exitoso! Redirigiendo...");
-        setTimeout(() => {
-          onLogin && onLogin({ ...formData, rememberMe });
-        }, 1000);
+      if (result.success) {
+        setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');
       } else {
-        setError(
-          "Usuario o contraseña incorrectos. Intenta con: admin / fumigacion123"
-        );
+        setError(result.error || 'Error en el inicio de sesión');
       }
     } catch (err) {
       setError(
-        "Error de conexión. Por favor verifica tu conexión a internet e inténtalo nuevamente."
+        'Error de conexión. Por favor verifica tu conexión a internet e inténtalo nuevamente.'
       );
     } finally {
       setIsLoading(false);
@@ -418,7 +411,7 @@ const Login = ({ onLogin }) => {
             </InputIcon>
             <PasswordInput>
               <Input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 placeholder="Contraseña"
                 value={formData.password}
@@ -440,7 +433,7 @@ const Login = ({ onLogin }) => {
               type="checkbox"
               id="remember"
               checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
+              onChange={e => setRememberMe(e.target.checked)}
               disabled={isLoading}
             />
             <label htmlFor="remember">Recordarme</label>
@@ -448,7 +441,7 @@ const Login = ({ onLogin }) => {
 
           <LoginButton type="submit" disabled={isLoading}>
             {isLoading && <LoadingSpinner />}
-            {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+            {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </LoginButton>
 
           <ForgotPassword href="#forgot">
