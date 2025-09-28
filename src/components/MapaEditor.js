@@ -13,6 +13,18 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet-draw";
 import * as turf from "@turf/turf";
+
+// Fix para íconos de Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
 import {
   FaEdit,
   FaTrash,
@@ -22,6 +34,7 @@ import {
   FaInfoCircle,
   FaSave,
   FaUndo,
+  FaTimes,
 } from "react-icons/fa";
 
 // Styled Components
@@ -146,104 +159,216 @@ const AlertMessage = styled.div`
   font-size: 0.85rem;
 `;
 
-// Componente que maneja los controles de dibujo usando useMapEvents
-const DrawingControls = ({ drawingMode, onPolygonCreate, setDrawingMode }) => {
-  const [drawnItems] = useState(() => new L.FeatureGroup());
-  const [activeDrawControl, setActiveDrawControl] = useState(null);
-  const map = useMapEvents({});
-
-  useEffect(() => {
-    if (!map) {
-      return;
-    }
-
-    // Agregar la capa de elementos dibujados al mapa si no está
-    if (!map.hasLayer(drawnItems)) {
-      map.addLayer(drawnItems);
-    }
-
-    // Limpiar control existente
-    if (activeDrawControl) {
-      try {
-        map.removeControl(activeDrawControl);
-      } catch (e) {
-        // Control ya removido
-      }
-      setActiveDrawControl(null);
-    }
-
-    // Si hay un modo de dibujo activo, agregar el control
-    if (drawingMode) {
-      const drawControl = new L.Control.Draw({
-        position: "topright",
-        draw: {
-          polygon: drawingMode === "polygon" ? {
-            allowIntersection: false,
-            showArea: true,
-            drawError: {
-              color: '#e1e100',
-              message: '<strong>Error:</strong> ¡Los bordes no pueden cruzarse!'
+// Componente que maneja el dibujo manual con click del ratón
+const DrawingControls = ({ drawingMode, onPolygonCreate, setDrawingMode, currentDrawing, setCurrentDrawing }) => {
+  const map = useMapEvents({
+    click: (e) => {
+      if (!drawingMode) return;
+      
+      if (drawingMode === 'polygon') {
+        // Agregar punto al dibujo actual
+        const { lat, lng } = e.latlng;
+        const newPoint = [lng, lat];
+        const newDrawing = [...currentDrawing, newPoint];
+        
+        console.log('Nuevo punto agregado:', newPoint, 'Total puntos:', newDrawing.length);
+        setCurrentDrawing(newDrawing);
+        
+        // Log del estado actual para depuración
+        console.log('Estado del dibujo:', {
+          puntos: newDrawing.length,
+          coordenadas: newDrawing
+        });
+        } else if (drawingMode === 'rectangle') {
+        // Para rectángulo, necesitamos dos clicks
+        if (!map._rectStart) {
+          // Primer click - esquina inicial
+          map._rectStart = e.latlng;
+          console.log('Inicio rectángulo:', map._rectStart);
+          const marker = L.marker([e.latlng.lat, e.latlng.lng], {
+            color: 'red'
+          }).addTo(map);
+          map._rectStartMarker = marker;
+        } else {
+          // Segundo click - esquina final
+          console.log('Final rectángulo:', e.latlng);
+          const bounds = L.latLngBounds(map._rectStart, e.latlng);
+          
+          const geojson = {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: [[
+                [bounds.getWest(), bounds.getNorth()],
+                [bounds.getEast(), bounds.getNorth()],
+                [bounds.getEast(), bounds.getSouth()],
+                [bounds.getWest(), bounds.getSouth()],
+                [bounds.getWest(), bounds.getNorth()]
+              ]]
             },
-            shapeOptions: {
-              color: '#4a7c59',
-              weight: 3,
-              fillOpacity: 0.3
-            }
-          } : false,
-          rectangle: drawingMode === "rectangle" ? {
-            shapeOptions: {
-              color: '#4a7c59',
-              weight: 3,
-              fillOpacity: 0.3
-            }
-          } : false,
-          circle: false,
-          marker: false,
-          polyline: false,
-          circlemarker: false,
-        },
-        edit: {
-          featureGroup: drawnItems,
-          remove: true,
-        },
-      });
-
-      try {
-        map.addControl(drawControl);
-        setActiveDrawControl(drawControl);
-      } catch (e) {
-        // Error agregando control de dibujo
-      }
-
-      // Manejar eventos de dibujo
-      const handleCreated = (e) => {
-        const layer = e.layer;
-        drawnItems.addLayer(layer);
-        
-        const geojson = layer.toGeoJSON();
-        
-        if (onPolygonCreate) {
-          onPolygonCreate(geojson);
-        }
-
-        setDrawingMode(null);
-      };
-
-      map.on(L.Draw.Event.CREATED, handleCreated);
-
-      return () => {
-        map.off(L.Draw.Event.CREATED, handleCreated);
-        if (activeDrawControl) {
-          try {
-            map.removeControl(activeDrawControl);
-          } catch (e) {
-            // Control ya removido
+            properties: {}
+          };
+          
+          // Limpiar elementos temporales
+          if (map._rectStartMarker) {
+            map.removeLayer(map._rectStartMarker);
+            delete map._rectStartMarker;
           }
-          setActiveDrawControl(null);
+          
+          delete map._rectStart;
+          
+          console.log('Rectángulo creado:', geojson);
+          
+          // Llamar al callback
+          if (onPolygonCreate) {
+            onPolygonCreate(geojson);
+          }
+          
+          setDrawingMode(null);
         }
+      }
+    },    dblclick: (e) => {
+      if (!drawingMode || drawingMode !== 'polygon' || currentDrawing.length < 3) return;
+      
+      // Finalizar el polígono
+      const coordinates = [...currentDrawing];
+      coordinates.push(coordinates[0]); // Cerrar el polígono
+      
+      const geojson = {
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [coordinates]
+        },
+        properties: {}
       };
+      
+      // Limpiar elementos temporales
+      if (map._tempMarkers) {
+        map._tempMarkers.forEach(marker => map.removeLayer(marker));
+        delete map._tempMarkers;
+      }
+      
+      if (map._tempPolygon) {
+        map.removeLayer(map._tempPolygon);
+        delete map._tempPolygon;
+      }
+      
+      // Mostrar estadísticas finales antes de limpiar
+      console.log('Polígono finalizado con doble click. Estadísticas finales:', calculateCurrentStats);
+      
+      // Limpiar el dibujo actual
+      setCurrentDrawing([]);
+      
+      // Llamar al callback
+      if (onPolygonCreate) {
+        onPolygonCreate(geojson);
+      }
+      
+      setDrawingMode(null);
+    },
+    
+    contextmenu: (e) => {
+      // Click derecho cancela el dibujo
+      if (currentDrawing.length > 0) {
+        if (map._tempMarkers) {
+          map._tempMarkers.forEach(marker => map.removeLayer(marker));
+          delete map._tempMarkers;
+        }
+        
+        if (map._tempPolygon) {
+          map.removeLayer(map._tempPolygon);
+          delete map._tempPolygon;
+        }
+        
+        setCurrentDrawing([]);
+        setDrawingMode(null);
+      }
+      
+      // Cancelar dibujo de rectángulo
+      if (map._rectStart) {
+        if (map._rectStartMarker) {
+          map.removeLayer(map._rectStartMarker);
+          delete map._rectStartMarker;
+        }
+        delete map._rectStart;
+        setDrawingMode(null);
+      }
     }
-  }, [map, drawingMode, onPolygonCreate, setDrawingMode, drawnItems, activeDrawControl]);
+  });
+
+  // Actualizar marcadores cuando cambia currentDrawing
+  useEffect(() => {
+    if (!map || drawingMode !== 'polygon') return;
+    
+    console.log('Actualizando marcadores para:', currentDrawing.length, 'puntos');
+    
+    // Limpiar marcadores existentes
+    if (map._tempMarkers) {
+      map._tempMarkers.forEach(marker => map.removeLayer(marker));
+    }
+    map._tempMarkers = [];
+    
+    // Limpiar polígono temporal
+    if (map._tempPolygon) {
+      map.removeLayer(map._tempPolygon);
+      map._tempPolygon = null;
+    }
+    
+    if (currentDrawing.length === 0) return;
+    
+    // Agregar marcadores para todos los puntos actuales
+    currentDrawing.forEach(([lng, lat], index) => {
+      const marker = L.marker([lat, lng], {
+        title: `Punto ${index + 1}`
+      }).addTo(map);
+      
+      if (!map._tempMarkers) map._tempMarkers = [];
+      map._tempMarkers.push(marker);
+    });
+    
+    // Actualizar polígono temporal si hay suficientes puntos
+    if (currentDrawing.length >= 3) {
+      const coords = currentDrawing.map(([lng, lat]) => [lat, lng]);
+      coords.push(coords[0]); // Cerrar el polígono
+      
+      map._tempPolygon = L.polygon(coords, {
+        color: '#4a7c59',
+        weight: 3,
+        fillOpacity: 0.3,
+        dashArray: '5,5'
+      }).addTo(map);
+    }
+  }, [map, currentDrawing, drawingMode]);
+
+  // Cambiar el cursor del mapa según el modo
+  useEffect(() => {
+    if (!map) return;
+    
+    const container = map.getContainer();
+    if (drawingMode) {
+      container.style.cursor = 'crosshair';
+      console.log('Cursor cambiado a crosshair para modo:', drawingMode);
+    } else {
+      container.style.cursor = '';
+      console.log('Cursor restaurado a normal');
+      
+      // Limpiar elementos temporales cuando se sale del modo de dibujo
+      if (map._tempMarkers) {
+        map._tempMarkers.forEach(marker => map.removeLayer(marker));
+        map._tempMarkers = [];
+      }
+      
+      if (map._tempPolygon) {
+        map.removeLayer(map._tempPolygon);
+        map._tempPolygon = null;
+      }
+    }
+    
+    return () => {
+      container.style.cursor = '';
+    };
+  }, [map, drawingMode]);
 
   return null;
 };
@@ -252,12 +377,16 @@ DrawingControls.propTypes = {
   drawingMode: PropTypes.string,
   onPolygonCreate: PropTypes.func,
   setDrawingMode: PropTypes.func,
+  currentDrawing: PropTypes.array,
+  setCurrentDrawing: PropTypes.func,
 };
 
 const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
   const [drawingMode, setDrawingMode] = useState(null);
   const [tempPolygon, setTempPolygon] = useState(null);
   const [alertMessage, setAlertMessage] = useState(null);
+  const [currentDrawing, setCurrentDrawing] = useState([]);
+  const [currentStats, setCurrentStats] = useState({ area: 0, perimetro: 0, vertices: 0 });
 
   // Calcular centro del mapa basado en la geometría o usar Viale como defecto
   const mapCenter = React.useMemo(() => {
@@ -323,7 +452,91 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
     };
   }, [geometry]);
 
+  // Calcular estadísticas en tiempo real durante el dibujo
+  const calculateCurrentStats = React.useMemo(() => {
+    const vertices = currentDrawing.length;
+    
+    if (!currentDrawing || vertices === 0) {
+      return { 
+        area: 0, 
+        perimetro: 0, 
+        vertices: 0,
+        distanciaTotal: 0,
+        status: 'empty'
+      };
+    }
+
+    if (vertices === 1) {
+      return {
+        area: 0,
+        perimetro: 0,
+        vertices: 1,
+        distanciaTotal: 0,
+        status: 'first_point'
+      };
+    }
+
+    if (vertices === 2) {
+      // Calcular distancia entre los dos puntos
+      const [lng1, lat1] = currentDrawing[0];
+      const [lng2, lat2] = currentDrawing[1];
+      
+      const from = turf.point([lng1, lat1]);
+      const to = turf.point([lng2, lat2]);
+      const distance = turf.distance(from, to, { units: 'kilometers' });
+      
+      return {
+        area: 0,
+        perimetro: 0,
+        vertices: 2,
+        distanciaTotal: Math.round(distance * 1000) / 1000, // En km con 3 decimales
+        status: 'two_points'
+      };
+    }
+
+    try {
+      // Con 3+ puntos, calcular área y perímetro del polígono
+      const coords = [...currentDrawing];
+      coords.push(coords[0]); // Cerrar el polígono
+      
+      const tempGeometry = {
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [coords]
+        }
+      };
+
+      const area = turf.area(tempGeometry) / 10000; // Convertir a hectáreas
+      const perimetro = turf.length(tempGeometry, { units: "kilometers" });
+
+      return {
+        area: Math.round(area * 100) / 100,
+        perimetro: Math.round(perimetro * 100) / 100,
+        vertices,
+        distanciaTotal: Math.round(perimetro * 100) / 100,
+        status: 'polygon'
+      };
+    } catch (error) {
+      console.error('Error calculando estadísticas:', error);
+      return { 
+        area: 0, 
+        perimetro: 0, 
+        vertices,
+        distanciaTotal: 0,
+        status: 'error'
+      };
+    }
+  }, [currentDrawing]);
+
+  // Actualizar estadísticas cuando cambie el dibujo
+  useEffect(() => {
+    setCurrentStats(calculateCurrentStats);
+  }, [calculateCurrentStats]);
+
   const handlePolygonCreate = (geojson) => {
+    console.log('handlePolygonCreate llamado con:', geojson);
+    
     const newGeometry = {
       type: "Feature",
       properties: {
@@ -333,8 +546,11 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
       geometry: geojson.geometry,
     };
 
+    console.log('Nueva geometría creada:', newGeometry);
+
     if (onChange) {
       onChange(newGeometry);
+      console.log('onChange llamado');
     }
 
     setAlertMessage({
@@ -348,20 +564,28 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
   };
 
   const handleStartDrawing = (mode) => {
+    console.log('handleStartDrawing llamado con modo:', mode, 'Estado actual:', drawingMode);
+    
     if (readonly) {
+      console.log('Modo readonly, cancelando dibujo');
       return;
     }
 
     // Si ya está en ese modo, desactivarlo, sino activar el nuevo modo
     const newMode = drawingMode === mode ? null : mode;
+    console.log('Nuevo modo será:', newMode);
+    
     setDrawingMode(newMode);
+    setCurrentDrawing([]); // Limpiar dibujo anterior
 
     if (newMode) {
+      const instructions = mode === "polygon" 
+        ? "Haz click para agregar puntos. Doble click para finalizar. Click derecho para cancelar."
+        : "Haz click en dos esquinas opuestas para crear el rectángulo. Click derecho para cancelar.";
+      
       setAlertMessage({
         type: "info",
-        message: `Modo ${
-          mode === "polygon" ? "polígono" : "rectángulo"
-        } activado. Usa las herramientas que aparecen en el mapa para dibujar.`,
+        message: `Modo ${mode === "polygon" ? "polígono" : "rectángulo"} activado. ${instructions}`,
       });
     } else {
       setAlertMessage({
@@ -394,6 +618,94 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
         message: "Geometría guardada exitosamente",
       });
     }
+  };
+
+  const handleRemoveLastPoint = () => {
+    if (currentDrawing.length > 0) {
+      const newDrawing = [...currentDrawing];
+      newDrawing.pop();
+      setCurrentDrawing(newDrawing);
+      
+      setAlertMessage({
+        type: "info",
+        message: `Último punto eliminado. Puntos restantes: ${newDrawing.length}`,
+      });
+      setTimeout(() => setAlertMessage(null), 2000);
+    }
+  };
+
+  const handleUndoDrawing = () => {
+    setCurrentDrawing([]);
+    setDrawingMode(null);
+    setAlertMessage({
+      type: "info", 
+      message: "Dibujo cancelado y puntos eliminados",
+    });
+    setTimeout(() => setAlertMessage(null), 2000);
+  };
+
+  const handleConfirmPolygon = () => {
+    console.log('🔵 BOTÓN CONFIRMAR CLICKEADO - Puntos actuales:', currentDrawing.length);
+    
+    if (currentDrawing.length < 3) {
+      console.log('❌ Insuficientes puntos para confirmar');
+      setAlertMessage({
+        type: "error",
+        message: "Necesitas al menos 3 puntos para crear un polígono",
+      });
+      setTimeout(() => setAlertMessage(null), 2000);
+      return;
+    }
+
+    // Crear el GeoJSON del polígono
+    const coordinates = [...currentDrawing];
+    coordinates.push(coordinates[0]); // Cerrar el polígono
+    
+    const geojson = {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [coordinates]
+      },
+      properties: {}
+    };
+
+    console.log('Polígono confirmado:', geojson);
+    
+    // Crear la geometría en el formato correcto para el formulario
+    const newGeometry = {
+      type: "Feature",
+      properties: {
+        nombre: "Campo Nuevo",
+        cultivo: "Por definir",
+      },
+      geometry: geojson.geometry,
+    };
+
+    console.log('Nueva geometría creada:', newGeometry);
+    console.log('Función onChange disponible:', typeof onChange);
+    
+    // Llamar al callback onChange directamente
+    if (onChange) {
+      onChange(newGeometry);
+      console.log('✅ onChange llamado exitosamente con geometría:', newGeometry);
+    } else {
+      console.error('❌ No hay función onChange disponible');
+    }
+    
+    // Limpiar elementos temporales y resetear estado
+    setCurrentDrawing([]);
+    setDrawingMode(null);
+    
+    // Mostrar mensaje de éxito
+    setAlertMessage({
+      type: "success",
+      message: `Polígono confirmado exitosamente. Área: ${
+        Math.round((turf.area(newGeometry) / 10000) * 100) / 100
+      } hectáreas`,
+    });
+
+    setTimeout(() => setAlertMessage(null), 3000);
   };
 
   const convertToLeafletCoordinates = (coordinates) => {
@@ -441,19 +753,32 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
             Limpiar
           </ToolButton>
 
-          {drawingMode && (
+          {drawingMode === "polygon" && currentDrawing.length > 0 && (
             <ToolButton
-              onClick={() => {
-                setDrawingMode(null);
-                setAlertMessage({
-                  type: "info",
-                  message: "Modo de dibujo cancelado",
-                });
-                setTimeout(() => setAlertMessage(null), 2000);
-              }}
+              onClick={handleRemoveLastPoint}
+              disabled={currentDrawing.length === 0}
             >
               <FaUndo />
-              Cancelar Dibujo
+              Eliminar Último
+            </ToolButton>
+          )}
+
+          {drawingMode === "polygon" && currentDrawing.length >= 3 && (
+            <ToolButton
+              onClick={handleConfirmPolygon}
+              style={{ backgroundColor: '#28a745', color: 'white' }}
+            >
+              <FaSave />
+              Confirmar Polígono
+            </ToolButton>
+          )}
+
+          {drawingMode && (
+            <ToolButton
+              onClick={handleUndoDrawing}
+            >
+              <FaTimes />
+              Cancelar Todo
             </ToolButton>
           )}
 
@@ -469,14 +794,92 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
           >
             {drawingMode ? (
               <span>
-                🎯 Modo {drawingMode === "polygon" ? "Polígono" : "Rectángulo"}{" "}
-                activo
+                {drawingMode === "polygon" ? (
+                  <>
+                    🎯 Polígono - Puntos: {currentDrawing.length}
+                    {currentStats.status === 'first_point' && " - Agrega más puntos"}
+                    {currentStats.status === 'two_points' && ` - Distancia: ${currentStats.distanciaTotal}km`}
+                    {currentStats.status === 'polygon' && ` - ${currentStats.area}ha ✓`}
+                  </>
+                ) : (
+                  "🎯 Modo Rectángulo activo"
+                )}
               </span>
             ) : (
               <span>👆 Selecciona una herramienta para dibujar</span>
             )}
           </div>
         </ToolbarContainer>
+      )}
+
+      {/* Panel de previsualización en tiempo real */}
+      {!readonly && drawingMode === "polygon" && currentDrawing.length > 0 && (
+        <div style={{
+          background: currentStats.status === 'polygon' ? '#f8f9fa' : '#fff3cd',
+          border: `1px solid ${currentStats.status === 'polygon' ? '#dee2e6' : '#ffeaa7'}`,
+          borderRadius: '8px',
+          padding: '12px',
+          margin: '8px 16px',
+          fontSize: '0.9rem',
+          color: '#495057'
+        }}>
+          {currentStats.status === 'first_point' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '1.2em' }}>📍</span>
+              <span><strong>Primer punto agregado.</strong> Haz click en otro lugar para continuar.</span>
+            </div>
+          )}
+          
+          {currentStats.status === 'two_points' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ fontSize: '1.1em' }}>📏</span>
+                <strong>Distancia:</strong> {currentStats.distanciaTotal} km
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <FaDrawPolygon style={{ color: '#6f42c1' }} />
+                <strong>Puntos:</strong> {currentStats.vertices}
+              </div>
+              <span style={{ fontStyle: 'italic', color: '#6c757d' }}>
+                Agrega un punto más para crear el polígono
+              </span>
+            </div>
+          )}
+          
+          {currentStats.status === 'polygon' && (
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+              gap: '15px',
+              alignItems: 'center'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <FaCalculator style={{ color: '#28a745' }} />
+                <strong>Área:</strong> {currentStats.area} ha
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <FaInfoCircle style={{ color: '#007bff' }} />
+                <strong>Perímetro:</strong> {currentStats.perimetro} km
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <FaDrawPolygon style={{ color: '#6f42c1' }} />
+                <strong>Vértices:</strong> {currentStats.vertices}
+              </div>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '5px',
+                background: '#d4edda',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '0.85em'
+              }}>
+                <span>✅</span>
+                <strong>Listo para confirmar</strong>
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       {alertMessage && (
@@ -501,6 +904,8 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
               drawingMode={drawingMode}
               onPolygonCreate={handlePolygonCreate}
               setDrawingMode={setDrawingMode}
+              currentDrawing={currentDrawing}
+              setCurrentDrawing={setCurrentDrawing}
             />
           )}
 

@@ -280,10 +280,14 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
   };
 
   const handleGeometriaChange = (geometry) => {
+    console.log('🔄 LoteForm: handleGeometriaChange llamado con:', geometry);
+    
     setFormData((prev) => ({
       ...prev,
       geometria: geometry,
     }));
+
+    console.log('✅ LoteForm: formData.geometria actualizado');
 
     // Calcular hectáreas automáticamente si la geometría es válida
     if (

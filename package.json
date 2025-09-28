@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-query": "^5.90.2",
+    "@tanstack/react-query-devtools": "^5.90.2",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
@@ -10,33 +13,28 @@
     "@turf/area": "^7.2.0",
     "@turf/centroid": "^7.2.0",
     "@turf/turf": "^7.2.0",
+    "axios": "^1.12.2",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "prop-types": "^15.8.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-hook-form": "^7.63.0",
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.9.3",
     "react-scripts": "5.0.1",
     "recharts": "^3.2.1",
     "styled-components": "^6.1.19",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zod": "^4.1.11",
+    "zustand": "^5.0.8"
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "nodemon --exec \"npm start\"",
-    "dev:watch": "nodemon --watch src --ext js,jsx,ts,tsx,css,scss --exec \"npm start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:watch": "nodemon --exec \"npm test\"",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -52,9 +50,24 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@types/leaflet": "^1.9.20",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.14",
+    "@types/react-dom": "^19.1.9",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "nodemon": "^3.1.10"
+    "msw": "^2.11.3",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "typescript": "^4.9.5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
