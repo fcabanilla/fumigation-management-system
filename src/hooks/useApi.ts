@@ -275,6 +275,15 @@ export function useLotes() {
     loadLotes();
   }, []);
 
+  // Funciones auxiliares para filtrar lotes
+  const getLotesConGeometria = () => {
+    return lotes.filter(lote => lote.geometria && lote.geometria.geometry);
+  };
+
+  const getLoteById = (id: string) => {
+    return lotes.find(lote => lote.id === id) || null;
+  };
+
   return {
     lotes,
     isLoading,
@@ -282,5 +291,7 @@ export function useLotes() {
     createLote,
     updateLote,
     deleteLote,
+    getLotesConGeometria,
+    getLoteById,
   };
 }

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState, useEffect, useMemo, createElement } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import {
   MapContainer,
@@ -13,17 +13,6 @@ import {
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import * as turf from '@turf/turf';
-import {
-  FaMapMarkerAlt,
-  FaEye,
-  FaInfoCircle,
-  FaCheckCircle,
-  FaClock,
-  FaCalculator,
-  FaEdit,
-  FaArrowLeft,
-} from 'react-icons/fa';
-import { GiSpray } from 'react-icons/gi';
 import { useFumigaciones } from '../hooks/useApi';
 import { Fumigacion, GeoJSONFeature } from '../types/index';
 
@@ -259,18 +248,26 @@ const FUMIGACIONES_GEOJSON_EJEMPLO: FumigacionGeoespacial[] = [
 ];
 
 // Función para convertir fumigación regular a geoespacial
-const convertirAGeoespacial = (fumigacion: Fumigacion, index: number): FumigacionGeoespacial => {
+const convertirAGeoespacial = (
+  fumigacion: Fumigacion,
+  index: number
+): FumigacionGeoespacial => {
   // Si ya tiene geometría GeoJSONFeature, la mantiene
-  if (fumigacion.geometria && (fumigacion.geometria as any).type === 'Feature') {
+  if (
+    fumigacion.geometria &&
+    (fumigacion.geometria as any).type === 'Feature'
+  ) {
     return fumigacion as unknown as FumigacionGeoespacial;
   }
 
   // Generar geometría basada en coordenadas existentes o ejemplos
-  const ejemploBase = FUMIGACIONES_GEOJSON_EJEMPLO[index % FUMIGACIONES_GEOJSON_EJEMPLO.length];
+  const ejemploBase =
+    FUMIGACIONES_GEOJSON_EJEMPLO[index % FUMIGACIONES_GEOJSON_EJEMPLO.length];
   const offsetLat = (Math.random() - 0.5) * 0.02;
   const offsetLng = (Math.random() - 0.5) * 0.02;
 
-  const coordenadas = ejemploBase.geometria.geometry.coordinates as number[][][];
+  const coordenadas = ejemploBase.geometria.geometry
+    .coordinates as number[][][];
   const nuevaGeometria: GeoJSONFeature = {
     type: 'Feature',
     geometry: {
@@ -292,7 +289,10 @@ const convertirAGeoespacial = (fumigacion: Fumigacion, index: number): Fumigacio
     ...fumigacion,
     geometria: nuevaGeometria,
     hectareas: Math.round(area * 100) / 100,
-    efectividad: fumigacion.estado === 'COMPLETADA' ? Math.floor(Math.random() * 30) + 70 : 0,
+    efectividad:
+      fumigacion.estado === 'COMPLETADA'
+        ? Math.floor(Math.random() * 30) + 70
+        : 0,
   };
 };
 
@@ -312,16 +312,20 @@ const obtenerColorEstado = (estado: string): string => {
   }
 };
 
-const MapaFumigacionesGeoespacial: React.FC<MapaFumigacionesGeoespacialProps> = ({ onBack }) => {
+const MapaFumigacionesGeoespacial: React.FC<
+  MapaFumigacionesGeoespacialProps
+> = ({ onBack }) => {
   const [filtroEstado, setFiltroEstado] = useState<string>('todos');
-  
+
   // Usar el hook de fumigaciones en lugar de localStorage
   const { fumigaciones: fumigacionesApi, isLoading } = useFumigaciones();
 
   // Convertir fumigaciones del API a geoespaciales
   const fumigacionesGeoespaciales = useMemo<FumigacionGeoespacial[]>(() => {
     if (fumigacionesApi.length > 0) {
-      return fumigacionesApi.map((fumigacion, index) => convertirAGeoespacial(fumigacion, index));
+      return fumigacionesApi.map((fumigacion, index) =>
+        convertirAGeoespacial(fumigacion, index)
+      );
     }
     // Fallback a datos de ejemplo si no hay datos del API
     return FUMIGACIONES_GEOJSON_EJEMPLO;
@@ -337,12 +341,21 @@ const MapaFumigacionesGeoespacial: React.FC<MapaFumigacionesGeoespacialProps> = 
 
   // Calcular estadísticas
   const estadisticas = useMemo<EstadisticasGeoespaciales>(() => {
-    const completadas = fumigacionesGeoespaciales.filter(f => f.estado === 'COMPLETADA');
-    const totalHectareas = fumigacionesGeoespaciales.reduce((sum, f) => sum + (f.hectareas || 0), 0);
-    const totalCosto = fumigacionesGeoespaciales.reduce((sum, f) => sum + (f.costo || 0), 0);
+    const completadas = fumigacionesGeoespaciales.filter(
+      f => f.estado === 'COMPLETADA'
+    );
+    const totalHectareas = fumigacionesGeoespaciales.reduce(
+      (sum, f) => sum + (f.hectareas || 0),
+      0
+    );
+    const totalCosto = fumigacionesGeoespaciales.reduce(
+      (sum, f) => sum + (f.costo || 0),
+      0
+    );
     const promedioEfectividad =
       completadas.length > 0
-        ? completadas.reduce((sum, f) => sum + (f.efectividad || 0), 0) / completadas.length
+        ? completadas.reduce((sum, f) => sum + (f.efectividad || 0), 0) /
+          completadas.length
         : 0;
 
     return {
@@ -357,10 +370,7 @@ const MapaFumigacionesGeoespacial: React.FC<MapaFumigacionesGeoespacialProps> = 
     return (
       <MapaContainer>
         <MapaHeader>
-          <Title>
-            {createElement(GiSpray)}
-            Cargando Mapa Geoespacial...
-          </Title>
+          <Title>🚿 Cargando Mapa Geoespacial...</Title>
         </MapaHeader>
       </MapaContainer>
     );
@@ -369,23 +379,18 @@ const MapaFumigacionesGeoespacial: React.FC<MapaFumigacionesGeoespacialProps> = 
   return (
     <MapaContainer>
       <MapaHeader>
-        <Title>
-          {createElement(GiSpray)}
-          Mapa Geoespacial de Fumigaciones
-        </Title>
-        <BackButton onClick={onBack}>
-          {createElement(FaArrowLeft)}
-          Volver
-        </BackButton>
+        <Title>🚿 Mapa Geoespacial de Fumigaciones</Title>
+        <BackButton onClick={onBack}>←️ Volver</BackButton>
       </MapaHeader>
 
       <ControlPanel>
         <ControlRow>
-          <label htmlFor="filtro-estado">Filtrar por estado:</label>
+          <label id="filtro-estado-label" htmlFor="filtro-estado">Filtrar por estado:</label>
           <FilterSelect
             id="filtro-estado"
+            aria-labelledby="filtro-estado-label"
             value={filtroEstado}
-            onChange={(e) => setFiltroEstado(e.target.value)}
+            onChange={e => setFiltroEstado(e.target.value)}
           >
             <option value="todos">Todos los estados</option>
             <option value="PLANIFICADA">Planificadas</option>
@@ -398,33 +403,25 @@ const MapaFumigacionesGeoespacial: React.FC<MapaFumigacionesGeoespacialProps> = 
 
       <StatsGrid>
         <StatCard>
-          <StatIcon>
-            {createElement(FaMapMarkerAlt)}
-          </StatIcon>
+          <StatIcon>🗺️</StatIcon>
           <StatValue>{estadisticas.totalCampos}</StatValue>
           <StatLabel>Campos Totales</StatLabel>
         </StatCard>
 
         <StatCard>
-          <StatIcon>
-            {createElement(FaCalculator)}
-          </StatIcon>
+          <StatIcon>📏</StatIcon>
           <StatValue>{estadisticas.hectareasTratadas}</StatValue>
           <StatLabel>Hectáreas Tratadas</StatLabel>
         </StatCard>
 
         <StatCard>
-          <StatIcon>
-            {createElement(FaCheckCircle)}
-          </StatIcon>
+          <StatIcon>✅</StatIcon>
           <StatValue>{estadisticas.efectividadPromedio}%</StatValue>
           <StatLabel>Efectividad Promedio</StatLabel>
         </StatCard>
 
         <StatCard>
-          <StatIcon>
-            {createElement(GiSpray)}
-          </StatIcon>
+          <StatIcon>🚿</StatIcon>
           <StatValue>${estadisticas.costoTotal.toLocaleString()}</StatValue>
           <StatLabel>Costo Total</StatLabel>
         </StatCard>
@@ -436,17 +433,18 @@ const MapaFumigacionesGeoespacial: React.FC<MapaFumigacionesGeoespacialProps> = 
           zoom={12}
           style={{ height: '100%', width: '100%' }}
         >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
           <LayerGroup>
-            {fumigacionesFiltradas.map((fumigacion) => {
+            {fumigacionesFiltradas.map(fumigacion => {
               const color = obtenerColorEstado(fumigacion.estado);
-              
+
               // Extraer coordenadas del polígono
-              const coordinates = fumigacion.geometria.geometry.coordinates[0] as number[][];
-              const positions: [number, number][] = coordinates.map(([lng, lat]) => [lat, lng]);
+              const coordinates = fumigacion.geometria.geometry
+                .coordinates[0] as number[][];
+              const positions: [number, number][] = coordinates.map(
+                ([lng, lat]) => [lat, lng]
+              );
 
               return (
                 <Polygon
@@ -462,22 +460,38 @@ const MapaFumigacionesGeoespacial: React.FC<MapaFumigacionesGeoespacialProps> = 
                 >
                   <Popup>
                     <PopupContainer>
-                      <PopupTitle color={color}>
-                        {fumigacion.nombre}
-                      </PopupTitle>
-                      <p><strong>Campo:</strong> {fumigacion.campo}</p>
-                      <p><strong>Estado:</strong> {fumigacion.estado}</p>
-                      <p><strong>Hectáreas:</strong> {fumigacion.hectareas} ha</p>
-                      <p><strong>Producto:</strong> {fumigacion.producto}</p>
-                      <p><strong>Responsable:</strong> {fumigacion.responsable}</p>
+                      <PopupTitle color={color}>{fumigacion.nombre}</PopupTitle>
+                      <p>
+                        <strong>Campo:</strong> {fumigacion.campo}
+                      </p>
+                      <p>
+                        <strong>Estado:</strong> {fumigacion.estado}
+                      </p>
+                      <p>
+                        <strong>Hectáreas:</strong> {fumigacion.hectareas} ha
+                      </p>
+                      <p>
+                        <strong>Producto:</strong> {fumigacion.producto}
+                      </p>
+                      <p>
+                        <strong>Responsable:</strong> {fumigacion.responsable}
+                      </p>
                       {fumigacion.efectividad && fumigacion.efectividad > 0 && (
-                        <p><strong>Efectividad:</strong> {fumigacion.efectividad}%</p>
+                        <p>
+                          <strong>Efectividad:</strong> {fumigacion.efectividad}
+                          %
+                        </p>
                       )}
-                      <p><strong>Costo:</strong> ${fumigacion.costo.toLocaleString()}</p>
+                      <p>
+                        <strong>Costo:</strong> $
+                        {fumigacion.costo.toLocaleString()}
+                      </p>
                     </PopupContainer>
                   </Popup>
                   <Tooltip>
-                    <span>{fumigacion.nombre} - {fumigacion.hectareas} ha</span>
+                    <span>
+                      {fumigacion.nombre} - {fumigacion.hectareas} ha
+                    </span>
                   </Tooltip>
                 </Polygon>
               );

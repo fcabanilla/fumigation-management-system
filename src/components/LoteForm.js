@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import MapaEditor from "./MapaEditor";
-import * as turf from "@turf/turf";
-import { FaSave, FaTimes, FaMapMarkedAlt, FaCalculator } from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { MapEditor } from './MapComponent';
+import * as turf from '@turf/turf';
+import { FaSave, FaTimes, FaMapMarkedAlt, FaCalculator } from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
 
 // Styled Components
 const FormContainer = styled.div`
@@ -204,24 +204,24 @@ const ErrorMessage = styled.div`
 `;
 
 const CULTIVOS_OPTIONS = [
-  { value: "", label: "Seleccionar cultivo" },
-  { value: "Soja", label: "Soja" },
-  { value: "Maíz", label: "Maíz" },
-  { value: "Trigo", label: "Trigo" },
-  { value: "Girasol", label: "Girasol" },
-  { value: "Sorgo", label: "Sorgo" },
-  { value: "Avena", label: "Avena" },
-  { value: "Cebada", label: "Cebada" },
-  { value: "Otro", label: "Otro" },
+  { value: '', label: 'Seleccionar cultivo' },
+  { value: 'Soja', label: 'Soja' },
+  { value: 'Maíz', label: 'Maíz' },
+  { value: 'Trigo', label: 'Trigo' },
+  { value: 'Girasol', label: 'Girasol' },
+  { value: 'Sorgo', label: 'Sorgo' },
+  { value: 'Avena', label: 'Avena' },
+  { value: 'Cebada', label: 'Cebada' },
+  { value: 'Otro', label: 'Otro' },
 ];
 
 const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
-    nombre: "",
-    descripcion: "",
-    hectareas: "",
-    cultivo: "",
-    propietario: "",
+    nombre: '',
+    descripcion: '',
+    hectareas: '',
+    cultivo: '',
+    propietario: '',
     geometria: null,
   });
 
@@ -232,11 +232,11 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
   useEffect(() => {
     if (lote && isEditing) {
       setFormData({
-        nombre: lote.nombre || "",
-        descripcion: lote.descripcion || "",
-        hectareas: lote.hectareas || "",
-        cultivo: lote.cultivo || "",
-        propietario: lote.propietario || "",
+        nombre: lote.nombre || '',
+        descripcion: lote.descripcion || '',
+        hectareas: lote.hectareas || '',
+        cultivo: lote.cultivo || '',
+        propietario: lote.propietario || '',
         geometria: lote.geometria || null,
       });
     }
@@ -253,7 +253,7 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
     }
 
     const area = turf.area(formData.geometria) / 10000; // Convertir a hectáreas
-    const perimetro = turf.length(formData.geometria, { units: "kilometers" });
+    const perimetro = turf.length(formData.geometria, { units: 'kilometers' });
     const vertices = formData.geometria.geometry.coordinates[0].length - 1;
 
     return {
@@ -263,26 +263,26 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
     };
   }, [formData.geometria]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
 
     // Limpiar error si existe
     if (errors[name]) {
-      setErrors((prev) => ({
+      setErrors(prev => ({
         ...prev,
-        [name]: "",
+        [name]: '',
       }));
     }
   };
 
-  const handleGeometriaChange = (geometry) => {
+  const handleGeometriaChange = geometry => {
     console.log('🔄 LoteForm: handleGeometriaChange llamado con:', geometry);
-    
-    setFormData((prev) => ({
+
+    setFormData(prev => ({
       ...prev,
       geometria: geometry,
     }));
@@ -298,7 +298,7 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
       try {
         const area = turf.area(geometry);
         const areaHectares = (area / 10000).toFixed(2);
-        setFormData((prev) => ({
+        setFormData(prev => ({
           ...prev,
           hectareas: areaHectares,
         }));
@@ -312,30 +312,30 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
     const newErrors = {};
 
     if (!formData.nombre.trim()) {
-      newErrors.nombre = "El nombre es obligatorio";
+      newErrors.nombre = 'El nombre es obligatorio';
     }
 
     if (!formData.propietario.trim()) {
-      newErrors.propietario = "El propietario es obligatorio";
+      newErrors.propietario = 'El propietario es obligatorio';
     }
 
     if (!formData.hectareas || parseFloat(formData.hectareas) <= 0) {
-      newErrors.hectareas = "Las hectáreas deben ser mayores a 0";
+      newErrors.hectareas = 'Las hectáreas deben ser mayores a 0';
     }
 
     if (!formData.cultivo) {
-      newErrors.cultivo = "Debe seleccionar un cultivo";
+      newErrors.cultivo = 'Debe seleccionar un cultivo';
     }
 
     if (!formData.geometria) {
-      newErrors.geometria = "Debe dibujar la geometría del lote";
+      newErrors.geometria = 'Debe dibujar la geometría del lote';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -361,7 +361,7 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
 
       await onSave(loteData);
     } catch (error) {
-      setErrors({ general: "Error al guardar el lote" });
+      setErrors({ general: 'Error al guardar el lote' });
     } finally {
       setLoading(false);
     }
@@ -387,7 +387,7 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
                 name="nombre"
                 value={formData.nombre}
                 onChange={handleInputChange}
-                className={errors.nombre ? "error" : ""}
+                className={errors.nombre ? 'error' : ''}
                 placeholder="Campo Norte Principal"
               />
               {errors.nombre && <ErrorMessage>{errors.nombre}</ErrorMessage>}
@@ -411,9 +411,9 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
                 name="cultivo"
                 value={formData.cultivo}
                 onChange={handleInputChange}
-                className={errors.cultivo ? "error" : ""}
+                className={errors.cultivo ? 'error' : ''}
               >
-                {CULTIVOS_OPTIONS.map((cultivo) => (
+                {CULTIVOS_OPTIONS.map(cultivo => (
                   <option key={cultivo.value} value={cultivo.value}>
                     {cultivo.label}
                   </option>
@@ -439,7 +439,7 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
                 name="propietario"
                 value={formData.propietario}
                 onChange={handleInputChange}
-                className={errors.propietario ? "error" : ""}
+                className={errors.propietario ? 'error' : ''}
                 placeholder="Establecimiento San José"
               />
               {errors.propietario && (
@@ -456,7 +456,7 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
                 name="hectareas"
                 value={formData.hectareas}
                 onChange={handleInputChange}
-                className={errors.hectareas ? "error" : ""}
+                className={errors.hectareas ? 'error' : ''}
                 step="0.1"
                 min="0.1"
                 placeholder="45.5"
@@ -498,10 +498,12 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
             {!formData.geometria && <RequiredMark>*</RequiredMark>}
           </SectionTitle>
 
-          <MapaEditor
+          <MapEditor
             geometry={formData.geometria}
-            onChange={handleGeometriaChange}
-            height={400}
+            onGeometryChange={handleGeometriaChange}
+            height="400px"
+            showStats={true}
+            title="Definir Geometría del Lote"
           />
 
           {errors.geometria && <ErrorMessage>{errors.geometria}</ErrorMessage>}
@@ -517,15 +519,15 @@ const LoteForm = ({ lote, isEditing, onSave, onCancel }) => {
           <SaveButton type="submit" disabled={loading}>
             <FaSave />
             {loading
-              ? "Guardando..."
+              ? 'Guardando...'
               : isEditing
-              ? "Actualizar Lote"
-              : "Crear Lote"}
+                ? 'Actualizar Lote'
+                : 'Crear Lote'}
           </SaveButton>
         </ButtonGroup>
 
         {errors.general && (
-          <ErrorMessage style={{ textAlign: "center", marginTop: "1rem" }}>
+          <ErrorMessage style={{ textAlign: 'center', marginTop: '1rem' }}>
             {errors.general}
           </ErrorMessage>
         )}

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { FaSave, FaTimes, FaEye, FaEyeSlash } from "react-icons/fa";
-import { GiSpray } from "react-icons/gi";
-import MapaEditor from "./MapaEditor";
-import LoteSelector from "./LoteSelector";
-import * as turf from "@turf/turf";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { FaSave, FaTimes, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { GiSpray } from 'react-icons/gi';
+import { MapEditor } from './MapComponent';
+import MapEditorAdvanced from './MapEditorAdvanced';
+import LoteSelector from './LoteSelector';
+import * as turf from '@turf/turf';
 
 // Styled Components
 const FormContainer = styled.div`
@@ -288,63 +289,63 @@ const PreviewValue = styled.span`
 
 // Estados y tipos de tratamiento
 const TIPOS_TRATAMIENTO = [
-  { value: "", label: "Selecciona tipo de tratamiento" },
-  { value: "Preventivo", label: "Preventivo" },
-  { value: "Correctivo", label: "Correctivo" },
-  { value: "Masivo", label: "Masivo" },
-  { value: "Selectivo", label: "Selectivo" },
+  { value: '', label: 'Selecciona tipo de tratamiento' },
+  { value: 'Preventivo', label: 'Preventivo' },
+  { value: 'Correctivo', label: 'Correctivo' },
+  { value: 'Masivo', label: 'Masivo' },
+  { value: 'Selectivo', label: 'Selectivo' },
 ];
 
 const TIPOS_PRODUCTO = [
-  { value: "", label: "Selecciona tipo de producto" },
+  { value: '', label: 'Selecciona tipo de producto' },
   {
-    value: "Insecticida Organofosforado",
-    label: "Insecticida Organofosforado",
+    value: 'Insecticida Organofosforado',
+    label: 'Insecticida Organofosforado',
   },
-  { value: "Insecticida Piretroide", label: "Insecticida Piretroide" },
-  { value: "Fungicida Sistémico", label: "Fungicida Sistémico" },
-  { value: "Fungicida de Contacto", label: "Fungicida de Contacto" },
-  { value: "Herbicida Pre-emergente", label: "Herbicida Pre-emergente" },
-  { value: "Herbicida Post-emergente", label: "Herbicida Post-emergente" },
-  { value: "Acaricida", label: "Acaricida" },
-  { value: "Nematicida", label: "Nematicida" },
+  { value: 'Insecticida Piretroide', label: 'Insecticida Piretroide' },
+  { value: 'Fungicida Sistémico', label: 'Fungicida Sistémico' },
+  { value: 'Fungicida de Contacto', label: 'Fungicida de Contacto' },
+  { value: 'Herbicida Pre-emergente', label: 'Herbicida Pre-emergente' },
+  { value: 'Herbicida Post-emergente', label: 'Herbicida Post-emergente' },
+  { value: 'Acaricida', label: 'Acaricida' },
+  { value: 'Nematicida', label: 'Nematicida' },
 ];
 
 const EQUIPOS_FUMIGACION = [
-  { value: "", label: "Selecciona equipo" },
-  { value: "Pulverizador Manual", label: "Pulverizador Manual" },
-  { value: "Pulverizador de Arrastre", label: "Pulverizador de Arrastre" },
+  { value: '', label: 'Selecciona equipo' },
+  { value: 'Pulverizador Manual', label: 'Pulverizador Manual' },
+  { value: 'Pulverizador de Arrastre', label: 'Pulverizador de Arrastre' },
   {
-    value: "Pulverizador Autopropulsado",
-    label: "Pulverizador Autopropulsado",
+    value: 'Pulverizador Autopropulsado',
+    label: 'Pulverizador Autopropulsado',
   },
-  { value: "Avión Fumigador", label: "Avión Fumigador" },
-  { value: "Dron de Fumigación", label: "Dron de Fumigación" },
-  { value: "Nebulizador", label: "Nebulizador" },
+  { value: 'Avión Fumigador', label: 'Avión Fumigador' },
+  { value: 'Dron de Fumigación', label: 'Dron de Fumigación' },
+  { value: 'Nebulizador', label: 'Nebulizador' },
 ];
 
 const ESTADOS_FUMIGACION = [
-  { value: "PLANIFICADA", label: "Planificada" },
-  { value: "EN_PROCESO", label: "En Proceso" },
-  { value: "COMPLETADA", label: "Completada" },
-  { value: "CANCELADA", label: "Cancelada" },
+  { value: 'PLANIFICADA', label: 'Planificada' },
+  { value: 'EN_PROCESO', label: 'En Proceso' },
+  { value: 'COMPLETADA', label: 'Completada' },
+  { value: 'CANCELADA', label: 'Cancelada' },
 ];
 
 const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
   const [formData, setFormData] = useState({
-    nombre: "",
-    campo: "",
-    tipoTratamiento: "",
-    producto: "",
-    dosis: "",
-    fechaPlanificada: "",
-    fechaRealizada: "",
-    estado: "PLANIFICADA",
-    hectareas: "",
-    costo: "",
-    responsable: "",
-    equipoUtilizado: "",
-    observaciones: "",
+    nombre: '',
+    campo: '',
+    tipoTratamiento: '',
+    producto: '',
+    dosis: '',
+    fechaPlanificada: '',
+    fechaRealizada: '',
+    estado: 'PLANIFICADA',
+    hectareas: '',
+    costo: '',
+    responsable: '',
+    equipoUtilizado: '',
+    observaciones: '',
     geometria: null, // Nueva: geometría GeoJSON del campo
   });
 
@@ -353,49 +354,49 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
   const [showPreview, setShowPreview] = useState(false);
 
   // Estados del selector de lotes
-  const [loteMode, setLoteMode] = useState("existing"); // 'new' o 'existing'
+  const [loteMode, setLoteMode] = useState('existing'); // 'new' o 'existing'
   const [selectedLoteId, setSelectedLoteId] = useState(null);
 
   // Cargar datos para edición
   useEffect(() => {
     if (fumigacion && isEdit) {
       setFormData({
-        nombre: fumigacion.nombre || "",
-        campo: fumigacion.campo || "",
-        tipoTratamiento: fumigacion.tipoTratamiento || "",
-        producto: fumigacion.producto || "",
-        dosis: fumigacion.dosis?.toString() || "",
-        fechaPlanificada: fumigacion.fechaPlanificada?.split("T")[0] || "",
-        fechaRealizada: fumigacion.fechaRealizada?.split("T")[0] || "",
-        estado: fumigacion.estado || "PLANIFICADA",
-        hectareas: fumigacion.hectareas?.toString() || "",
-        costo: fumigacion.costo?.toString() || "",
-        responsable: fumigacion.responsable || "",
-        equipoUtilizado: fumigacion.equipoUtilizado || "",
-        observaciones: fumigacion.observaciones || "",
+        nombre: fumigacion.nombre || '',
+        campo: fumigacion.campo || '',
+        tipoTratamiento: fumigacion.tipoTratamiento || '',
+        producto: fumigacion.producto || '',
+        dosis: fumigacion.dosis?.toString() || '',
+        fechaPlanificada: fumigacion.fechaPlanificada?.split('T')[0] || '',
+        fechaRealizada: fumigacion.fechaRealizada?.split('T')[0] || '',
+        estado: fumigacion.estado || 'PLANIFICADA',
+        hectareas: fumigacion.hectareas?.toString() || '',
+        costo: fumigacion.costo?.toString() || '',
+        responsable: fumigacion.responsable || '',
+        equipoUtilizado: fumigacion.equipoUtilizado || '',
+        observaciones: fumigacion.observaciones || '',
         geometria: fumigacion.geometria || null,
       });
     }
   }, [fumigacion, isEdit]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
 
     // Limpiar error si existe
     if (errors[name]) {
-      setErrors((prev) => ({
+      setErrors(prev => ({
         ...prev,
-        [name]: "",
+        [name]: '',
       }));
     }
   };
 
-  const handleGeometriaChange = (geometry) => {
-    setFormData((prev) => ({
+  const handleGeometriaChange = geometry => {
+    setFormData(prev => ({
       ...prev,
       geometria: geometry,
     }));
@@ -405,7 +406,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
       try {
         const area = turf.area(geometry);
         const areaHectares = (area / 10000).toFixed(2); // m² to hectares
-        setFormData((prev) => ({
+        setFormData(prev => ({
           ...prev,
           tamanoHectareas: areaHectares,
         }));
@@ -416,25 +417,25 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
   };
 
   // Funciones del selector de lotes
-  const handleModeChange = (mode) => {
+  const handleModeChange = mode => {
     setLoteMode(mode);
-    if (mode === "new") {
+    if (mode === 'new') {
       setSelectedLoteId(null);
-      setFormData((prev) => ({ ...prev, geometria: null }));
+      setFormData(prev => ({ ...prev, geometria: null }));
     }
   };
 
-  const handleLoteSelect = (lote) => {
+  const handleLoteSelect = lote => {
     setSelectedLoteId(lote.id);
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       geometria: lote.geometria,
       campo: lote.nombre,
-      hectareas: lote.hectareas?.toString() || "",
+      hectareas: lote.hectareas?.toString() || '',
     }));
   };
 
-  const handleViewLote = (lote) => {
+  const handleViewLote = lote => {
     // Aquí podrías abrir un modal o navegar a la vista del lote
     // Por ahora solo mostramos información en consola
     // eslint-disable-next-line no-console
@@ -445,7 +446,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
     // Aquí podrías navegar a la gestión de lotes
     // Por ahora solo mostramos información en consola
     // eslint-disable-next-line no-console
-    console.log("Redirigir a Gestión de Lotes para crear un nuevo lote");
+    console.log('Redirigir a Gestión de Lotes para crear un nuevo lote');
   };
 
   const validateForm = () => {
@@ -453,39 +454,39 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
 
     // Validaciones requeridas
     if (!formData.nombre.trim()) {
-      newErrors.nombre = "El nombre es requerido";
+      newErrors.nombre = 'El nombre es requerido';
     }
 
     if (!formData.campo.trim()) {
-      newErrors.campo = "El campo es requerido";
+      newErrors.campo = 'El campo es requerido';
     }
 
     if (!formData.tipoTratamiento) {
-      newErrors.tipoTratamiento = "Selecciona un tipo de tratamiento";
+      newErrors.tipoTratamiento = 'Selecciona un tipo de tratamiento';
     }
 
     if (!formData.producto) {
-      newErrors.producto = "Selecciona un producto";
+      newErrors.producto = 'Selecciona un producto';
     }
 
     if (!formData.dosis || parseFloat(formData.dosis) <= 0) {
-      newErrors.dosis = "La dosis debe ser mayor a 0";
+      newErrors.dosis = 'La dosis debe ser mayor a 0';
     }
 
     if (!formData.fechaPlanificada) {
-      newErrors.fechaPlanificada = "La fecha planificada es requerida";
+      newErrors.fechaPlanificada = 'La fecha planificada es requerida';
     }
 
     if (!formData.hectareas || parseFloat(formData.hectareas) <= 0) {
-      newErrors.hectareas = "Las hectáreas deben ser mayores a 0";
+      newErrors.hectareas = 'Las hectáreas deben ser mayores a 0';
     }
 
     if (!formData.responsable.trim()) {
-      newErrors.responsable = "El responsable es requerido";
+      newErrors.responsable = 'El responsable es requerido';
     }
 
     if (!formData.equipoUtilizado) {
-      newErrors.equipoUtilizado = "Selecciona un equipo";
+      newErrors.equipoUtilizado = 'Selecciona un equipo';
     }
 
     // Validación de fechas
@@ -495,21 +496,21 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
 
       if (realizada < planificada) {
         newErrors.fechaRealizada =
-          "La fecha realizada no puede ser anterior a la planificada";
+          'La fecha realizada no puede ser anterior a la planificada';
       }
     }
 
     // Validar estado y fecha realizada
-    if (formData.estado === "COMPLETADA" && !formData.fechaRealizada) {
+    if (formData.estado === 'COMPLETADA' && !formData.fechaRealizada) {
       newErrors.fechaRealizada =
-        "La fecha de realización es requerida para fumigaciones completadas";
+        'La fecha de realización es requerida para fumigaciones completadas';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -535,7 +536,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
       }
 
       // Simular delay de guardado
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       if (onSave) {
         onSave(fumigacionData);
@@ -547,25 +548,25 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
     }
   };
 
-  const formatCurrency = (value) => {
+  const formatCurrency = value => {
     if (!value) {
-      return "";
+      return '';
     }
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
     }).format(value);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     if (!dateString) {
-      return "";
+      return '';
     }
     const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
     });
   };
 
@@ -575,7 +576,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
         <FormHeader>
           <FormTitle>
             <GiSpray />
-            {isEdit ? "Editar Fumigación" : "Nueva Fumigación"}
+            {isEdit ? 'Editar Fumigación' : 'Nueva Fumigación'}
           </FormTitle>
           <CloseButton onClick={onCancel} type="button">
             <FaTimes />
@@ -594,7 +595,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="nombre"
                   value={formData.nombre}
                   onChange={handleInputChange}
-                  className={errors.nombre ? "error" : ""}
+                  className={errors.nombre ? 'error' : ''}
                   placeholder="Ej: Tratamiento Preventivo Campo Norte"
                   maxLength={100}
                 />
@@ -610,7 +611,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="campo"
                   value={formData.campo}
                   onChange={handleInputChange}
-                  className={errors.campo ? "error" : ""}
+                  className={errors.campo ? 'error' : ''}
                   placeholder="Ej: Campo Norte - Lote A"
                 />
                 {errors.campo && <ErrorMessage>{errors.campo}</ErrorMessage>}
@@ -624,9 +625,9 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="tipoTratamiento"
                   value={formData.tipoTratamiento}
                   onChange={handleInputChange}
-                  className={errors.tipoTratamiento ? "error" : ""}
+                  className={errors.tipoTratamiento ? 'error' : ''}
                 >
-                  {TIPOS_TRATAMIENTO.map((tipo) => (
+                  {TIPOS_TRATAMIENTO.map(tipo => (
                     <option key={tipo.value} value={tipo.value}>
                       {tipo.label}
                     </option>
@@ -645,9 +646,9 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="producto"
                   value={formData.producto}
                   onChange={handleInputChange}
-                  className={errors.producto ? "error" : ""}
+                  className={errors.producto ? 'error' : ''}
                 >
-                  {TIPOS_PRODUCTO.map((producto) => (
+                  {TIPOS_PRODUCTO.map(producto => (
                     <option key={producto.value} value={producto.value}>
                       {producto.label}
                     </option>
@@ -667,7 +668,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="dosis"
                   value={formData.dosis}
                   onChange={handleInputChange}
-                  className={errors.dosis ? "error" : ""}
+                  className={errors.dosis ? 'error' : ''}
                   step="0.1"
                   min="0.1"
                   placeholder="2.5"
@@ -685,8 +686,8 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="fechaPlanificada"
                   value={formData.fechaPlanificada}
                   onChange={handleInputChange}
-                  className={errors.fechaPlanificada ? "error" : ""}
-                  min={new Date().toISOString().split("T")[0]}
+                  className={errors.fechaPlanificada ? 'error' : ''}
+                  min={new Date().toISOString().split('T')[0]}
                 />
                 {errors.fechaPlanificada && (
                   <ErrorMessage>{errors.fechaPlanificada}</ErrorMessage>
@@ -700,7 +701,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="fechaRealizada"
                   value={formData.fechaRealizada}
                   onChange={handleInputChange}
-                  className={errors.fechaRealizada ? "error" : ""}
+                  className={errors.fechaRealizada ? 'error' : ''}
                 />
                 {errors.fechaRealizada && (
                   <ErrorMessage>{errors.fechaRealizada}</ErrorMessage>
@@ -717,7 +718,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   value={formData.estado}
                   onChange={handleInputChange}
                 >
-                  {ESTADOS_FUMIGACION.map((estado) => (
+                  {ESTADOS_FUMIGACION.map(estado => (
                     <option key={estado.value} value={estado.value}>
                       {estado.label}
                     </option>
@@ -734,7 +735,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="hectareas"
                   value={formData.hectareas}
                   onChange={handleInputChange}
-                  className={errors.hectareas ? "error" : ""}
+                  className={errors.hectareas ? 'error' : ''}
                   step="0.1"
                   min="0.1"
                   placeholder="45.5"
@@ -744,7 +745,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                 )}
               </FormGroup>
 
-              <FormGroup>
+              <FormGroup className="full-width">
                 <LoteSelector
                   mode={loteMode}
                   onModeChange={handleModeChange}
@@ -754,10 +755,13 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   onNewLote={handleNewLote}
                 />
 
-                {loteMode === "new" && (
-                  <MapaEditor
+                {loteMode === 'new' && (
+                  <MapEditorAdvanced
                     geometry={formData.geometria}
-                    onChange={handleGeometriaChange}
+                    onGeometryChange={handleGeometriaChange}
+                    height="600px"
+                    showStats={true}
+                    title="🗺️ Definir Área de Fumigación"
                   />
                 )}
               </FormGroup>
@@ -785,7 +789,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="responsable"
                   value={formData.responsable}
                   onChange={handleInputChange}
-                  className={errors.responsable ? "error" : ""}
+                  className={errors.responsable ? 'error' : ''}
                   placeholder="Nombre del responsable"
                 />
                 {errors.responsable && (
@@ -801,9 +805,9 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                   name="equipoUtilizado"
                   value={formData.equipoUtilizado}
                   onChange={handleInputChange}
-                  className={errors.equipoUtilizado ? "error" : ""}
+                  className={errors.equipoUtilizado ? 'error' : ''}
                 >
-                  {EQUIPOS_FUMIGACION.map((equipo) => (
+                  {EQUIPOS_FUMIGACION.map(equipo => (
                     <option key={equipo.value} value={equipo.value}>
                       {equipo.label}
                     </option>
@@ -883,7 +887,7 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
                 onClick={() => setShowPreview(!showPreview)}
               >
                 {showPreview ? <FaEyeSlash /> : <FaEye />}
-                {showPreview ? "Ocultar Vista Previa" : "Vista Previa"}
+                {showPreview ? 'Ocultar Vista Previa' : 'Vista Previa'}
               </SecondaryButton>
 
               <SecondaryButton type="button" onClick={onCancel}>
@@ -894,10 +898,10 @@ const FumigacionForm = ({ fumigacion, onSave, onCancel, isEdit = false }) => {
               <PrimaryButton type="submit" disabled={isLoading}>
                 <FaSave />
                 {isLoading
-                  ? "Guardando..."
+                  ? 'Guardando...'
                   : isEdit
-                  ? "Actualizar"
-                  : "Guardar"}{" "}
+                    ? 'Actualizar'
+                    : 'Guardar'}{' '}
                 Fumigación
               </PrimaryButton>
             </FormActions>

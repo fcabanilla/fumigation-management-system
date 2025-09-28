@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import LotesList from './LotesList';
 import LoteForm from './LoteForm';
 import LoteView from './LoteView';
-import { MapList } from './MapComponent';
+import MapaLotes from './MapaLotes';
 import { useLotes } from '../hooks/useApi';
 import { FaPlus, FaEdit, FaMap, FaArrowLeft } from 'react-icons/fa';
 import { GiWheat } from 'react-icons/gi';
@@ -17,7 +17,7 @@ const VIEWS = {
   MAP: 'map',
 };
 
-// Styled Components (mantenemos el mismo estilo que el original)
+// Styled Components
 const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%);
@@ -91,44 +91,46 @@ const ContentArea = styled.div`
   overflow: hidden;
 `;
 
-/**
- * LoteManagerNew - Versión refactorizada del LoteManager
- * 
- * Mantiene la misma funcionalidad del original pero con mejor organización
- * y preparado para usar MapComponent en lugar de MapaLotes
- */
-const LoteManagerNew = ({ onBack }) => {
+// Datos iniciales ahora se manejan por el hook useLotes con MSW
+
+const LoteManager = ({ onBack }) => {
   const [currentView, setCurrentView] = useState(VIEWS.LIST);
   const [selectedLote, setSelectedLote] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Hook para operaciones de lotes
+  // Usar el hook moderno en lugar de localStorage
   const { lotes, isLoading, createLote, updateLote, deleteLote } = useLotes();
+
+  // Inicialización de datos (solo si es necesario)
+  useEffect(() => {
+    // Los datos se cargan automáticamente por el hook useLotes
+    // Este efecto se mantiene solo para posible inicialización futura
+  }, []);
 
   // Funciones de manejo de lotes
   const handleSaveLote = async loteData => {
     try {
-      let result;
-      
       if (isEditing && selectedLote) {
-        result = await updateLote(selectedLote.id, loteData);
-        if (result?.success) {
+        // Editar lote existente usando la API
+        const result = await updateLote(selectedLote.id, loteData);
+        if (result.success) {
           console.log('Lote actualizado exitosamente');
         } else {
-          console.error('Error actualizando lote:', result?.error);
-          return;
+          console.error('Error actualizando lote:', result.error);
+          return; // No cerrar el formulario si hay error
         }
       } else {
-        result = await createLote(loteData);
-        if (result?.success) {
+        // Crear nuevo lote usando la API
+        const result = await createLote(loteData);
+        if (result.success) {
           console.log('Lote creado exitosamente');
         } else {
-          console.error('Error creando lote:', result?.error);
-          return;
+          console.error('Error creando lote:', result.error);
+          return; // No cerrar el formulario si hay error
         }
       }
 
-      // Volver a la lista si fue exitoso
+      // Si llega aquí, la operación fue exitosa - volver a la lista
       setCurrentView(VIEWS.LIST);
       setSelectedLote(null);
       setIsEditing(false);
@@ -140,16 +142,16 @@ const LoteManagerNew = ({ onBack }) => {
   const handleDeleteLote = async loteId => {
     try {
       const result = await deleteLote(loteId);
-      if (result?.success) {
+      if (result.success) {
         console.log('Lote eliminado exitosamente');
 
-        // Si estamos viendo el lote eliminado, volver a la lista
+        // Si estamos viendo el lote que se eliminó, volver a la lista
         if (selectedLote && selectedLote.id === loteId) {
           setSelectedLote(null);
           setCurrentView(VIEWS.LIST);
         }
       } else {
-        console.error('Error eliminando lote:', result?.error);
+        console.error('Error eliminando lote:', result.error);
       }
     } catch (error) {
       console.error('Error eliminando lote:', error);
@@ -179,7 +181,7 @@ const LoteManagerNew = ({ onBack }) => {
       setSelectedLote(null);
       setIsEditing(false);
     } else {
-      onBack?.();
+      onBack();
     }
   };
 
@@ -214,18 +216,7 @@ const LoteManagerNew = ({ onBack }) => {
           />
         );
       case VIEWS.MAP:
-        // Usar el MapComponent nuevo en lugar de MapaLotes
-        return (
-          <MapList
-            entities={lotes}
-            entityType="lotes"
-            onEntitySelect={handleViewLote}
-            title="Mapa de Lotes"
-            height="calc(100vh - 200px)"
-            showFilter={true}
-            filters={{}} // Aquí se pueden agregar filtros
-          />
-        );
+        return <MapaLotes lotes={lotes} onSelectLote={handleViewLote} />;
       default:
         return null;
     }
@@ -293,8 +284,8 @@ const LoteManagerNew = ({ onBack }) => {
   );
 };
 
-LoteManagerNew.propTypes = {
+LoteManager.propTypes = {
   onBack: PropTypes.func.isRequired,
 };
 
-export default LoteManagerNew;
+export default LoteManager;
