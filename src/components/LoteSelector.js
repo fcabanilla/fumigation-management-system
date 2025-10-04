@@ -1,16 +1,16 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { useTheme } from "../contexts/ThemeContext";
-import useLotes from "../hooks/useLotes";
-import { FaMapMarkedAlt, FaPlus, FaEdit, FaEye } from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
-import * as turf from "@turf/turf";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLotes } from '../hooks/useApi';
+import { FaMapMarkedAlt, FaPlus, FaEdit, FaEye } from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
+import * as turf from '@turf/turf';
 
 // Styled Components
 const SelectorContainer = styled.div`
-  background: ${(props) => props.theme.colors.surface};
-  border: 1px solid ${(props) => props.theme.colors.border};
+  background: ${props => props.theme.colors.surface};
+  border: 1px solid ${props => props.theme.colors.border};
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;
@@ -21,7 +21,7 @@ const SelectorHeader = styled.div`
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  color: ${(props) => props.theme.colors.text};
+  color: ${props => props.theme.colors.text};
 `;
 
 const SelectorTitle = styled.h3`
@@ -37,11 +37,11 @@ const ModeSelector = styled.div`
 `;
 
 const ModeButton = styled.button`
-  background: ${(props) =>
+  background: ${props =>
     props.active ? props.theme.colors.primary : props.theme.colors.surface};
-  color: ${(props) =>
+  color: ${props =>
     props.active ? props.theme.colors.textOnPrimary : props.theme.colors.text};
-  border: 1px solid ${(props) => props.theme.colors.primary};
+  border: 1px solid ${props => props.theme.colors.primary};
   padding: 0.7rem 1.2rem;
   border-radius: 8px;
   cursor: pointer;
@@ -52,7 +52,7 @@ const ModeButton = styled.button`
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${(props) =>
+    background: ${props =>
       props.active
         ? props.theme.colors.primary
         : `${props.theme.colors.primary}20`};
@@ -62,22 +62,22 @@ const ModeButton = styled.button`
 const LotesList = styled.div`
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid ${(props) => props.theme.colors.borderLight};
+  border: 1px solid ${props => props.theme.colors.borderLight};
   border-radius: 8px;
 `;
 
 const LoteItem = styled.div`
   padding: 1rem;
-  border-bottom: 1px solid ${(props) => props.theme.colors.borderLight};
+  border-bottom: 1px solid ${props => props.theme.colors.borderLight};
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: ${(props) =>
-    props.selected ? `${props.theme.colors.primary}15` : "transparent"};
+  background: ${props =>
+    props.selected ? `${props.theme.colors.primary}15` : 'transparent'};
 
   &:hover {
-    background: ${(props) =>
+    background: ${props =>
       props.selected
         ? `${props.theme.colors.primary}20`
         : props.theme.colors.surfaceHover};
@@ -94,13 +94,13 @@ const LoteInfo = styled.div`
 
 const LoteName = styled.div`
   font-weight: 600;
-  color: ${(props) => props.theme.colors.text};
+  color: ${props => props.theme.colors.text};
   margin-bottom: 0.3rem;
 `;
 
 const LoteDetails = styled.div`
   font-size: 0.85rem;
-  color: ${(props) => props.theme.colors.textSecondary};
+  color: ${props => props.theme.colors.textSecondary};
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
@@ -123,19 +123,19 @@ const ActionButton = styled.button`
   padding: 0.5rem;
   border-radius: 6px;
   cursor: pointer;
-  color: ${(props) => props.theme.colors.textSecondary};
+  color: ${props => props.theme.colors.textSecondary};
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${(props) => props.theme.colors.surfaceHover};
-    color: ${(props) => props.theme.colors.primary};
+    background: ${props => props.theme.colors.surfaceHover};
+    color: ${props => props.theme.colors.primary};
   }
 `;
 
 const EmptyState = styled.div`
   padding: 2rem;
   text-align: center;
-  color: ${(props) => props.theme.colors.textMuted};
+  color: ${props => props.theme.colors.textMuted};
 
   svg {
     font-size: 2rem;
@@ -145,8 +145,8 @@ const EmptyState = styled.div`
 `;
 
 const SelectedLotePreview = styled.div`
-  background: ${(props) => `${props.theme.colors.primary}10`};
-  border: 1px solid ${(props) => `${props.theme.colors.primary}40`};
+  background: ${props => `${props.theme.colors.primary}10`};
+  border: 1px solid ${props => `${props.theme.colors.primary}40`};
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
@@ -154,7 +154,7 @@ const SelectedLotePreview = styled.div`
 
 const PreviewTitle = styled.div`
   font-weight: 600;
-  color: ${(props) => props.theme.colors.primary};
+  color: ${props => props.theme.colors.primary};
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
@@ -174,12 +174,12 @@ const PreviewStat = styled.div`
   .value {
     font-size: 1.1rem;
     font-weight: 600;
-    color: ${(props) => props.theme.colors.text};
+    color: ${props => props.theme.colors.text};
   }
 
   .label {
     font-size: 0.8rem;
-    color: ${(props) => props.theme.colors.textSecondary};
+    color: ${props => props.theme.colors.textSecondary};
     margin-top: 0.2rem;
   }
 `;
@@ -199,14 +199,14 @@ const LoteSelector = ({
   const selectedLote = selectedLoteId ? getLoteById(selectedLoteId) : null;
 
   // Calcular estadísticas del lote seleccionado
-  const getEstadisticasLote = (lote) => {
+  const getEstadisticasLote = lote => {
     if (!lote?.geometria?.geometry) {
       return { area: 0, perimetro: 0, vertices: 0 };
     }
 
     try {
       const area = turf.area(lote.geometria) / 10000; // Hectáreas
-      const perimetro = turf.length(lote.geometria, { units: "kilometers" });
+      const perimetro = turf.length(lote.geometria, { units: 'kilometers' });
       const vertices = lote.geometria.geometry.coordinates[0].length - 1;
 
       return {
@@ -219,8 +219,8 @@ const LoteSelector = ({
     }
   };
 
-  const handleLoteClick = (lote) => {
-    if (mode === "existing") {
+  const handleLoteClick = lote => {
+    if (mode === 'existing') {
       onLoteSelect(lote);
     }
   };
@@ -245,8 +245,8 @@ const LoteSelector = ({
 
       <ModeSelector>
         <ModeButton
-          active={mode === "new"}
-          onClick={() => onModeChange("new")}
+          active={mode === 'new'}
+          onClick={() => onModeChange('new')}
           theme={theme}
         >
           <FaPlus />
@@ -254,8 +254,8 @@ const LoteSelector = ({
         </ModeButton>
 
         <ModeButton
-          active={mode === "existing"}
-          onClick={() => onModeChange("existing")}
+          active={mode === 'existing'}
+          onClick={() => onModeChange('existing')}
           theme={theme}
         >
           <GiWheat />
@@ -263,7 +263,7 @@ const LoteSelector = ({
         </ModeButton>
       </ModeSelector>
 
-      {mode === "existing" && (
+      {mode === 'existing' && (
         <>
           {lotesDisponibles.length === 0 ? (
             <EmptyState theme={theme}>
@@ -273,7 +273,7 @@ const LoteSelector = ({
             </EmptyState>
           ) : (
             <LotesList theme={theme}>
-              {lotesDisponibles.map((lote) => {
+              {lotesDisponibles.map(lote => {
                 const estadisticas = getEstadisticasLote(lote);
                 const isSelected = selectedLoteId === lote.id;
 
@@ -301,7 +301,7 @@ const LoteSelector = ({
 
                     <ActionButtons>
                       <ActionButton
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           onViewLote(lote);
                         }}
@@ -350,10 +350,10 @@ const LoteSelector = ({
         </>
       )}
 
-      {mode === "new" && onNewLote && (
-        <div style={{ textAlign: "center", padding: "1rem" }}>
+      {mode === 'new' && onNewLote && (
+        <div style={{ textAlign: 'center', padding: '1rem' }}>
           <p
-            style={{ color: theme.colors.textSecondary, marginBottom: "1rem" }}
+            style={{ color: theme.colors.textSecondary, marginBottom: '1rem' }}
           >
             Usa las herramientas de dibujo en el mapa para crear un nuevo campo
           </p>
@@ -363,8 +363,8 @@ const LoteSelector = ({
             style={{
               background: theme.colors.primary,
               color: theme.colors.textOnPrimary,
-              padding: "0.7rem 1.2rem",
-              borderRadius: "8px",
+              padding: '0.7rem 1.2rem',
+              borderRadius: '8px',
             }}
           >
             <FaEdit />
@@ -377,7 +377,7 @@ const LoteSelector = ({
 };
 
 LoteSelector.propTypes = {
-  mode: PropTypes.oneOf(["new", "existing"]).isRequired,
+  mode: PropTypes.oneOf(['new', 'existing']).isRequired,
   onModeChange: PropTypes.func.isRequired,
   selectedLoteId: PropTypes.number,
   onLoteSelect: PropTypes.func.isRequired,
