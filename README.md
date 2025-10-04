@@ -102,6 +102,60 @@ npm run lint           # Ejecutar ESLint
 npm run lint:fix       # Corregir errores de ESLint automáticamente
 ```
 
+## 🚨 Solución de Problemas
+
+### Puerto 3000 ocupado
+
+```bash
+# Usar puerto alternativo
+PORT=3001 npm start
+# O encontrar el proceso y terminarlo
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
+```
+
+### Error al instalar dependencias
+
+```bash
+# Limpiar cache y reinstalar
+rm -rf node_modules package-lock.json
+npm cache clean --force
+npm install
+
+# En Windows PowerShell
+Remove-Item -Recurse -Force node_modules, package-lock.json
+npm cache clean --force
+npm install
+```
+
+### Tests fallan
+
+```bash
+# Ejecutar en modo verbose
+npm test -- --verbose --no-cache
+
+# Regenerar snapshots si es necesario
+npm test -- --updateSnapshot
+```
+
+### Problemas de memoria en build
+
+```bash
+# Aumentar memoria disponible para Node.js
+set NODE_OPTIONS=--max-old-space-size=4096 && npm run build
+
+# En Linux/Mac
+NODE_OPTIONS=--max-old-space-size=4096 npm run build
+```
+
+### Error de permisos en Windows
+
+```bash
+# Ejecutar PowerShell como administrador
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+npm install
+```
+
 ## � Credenciales de Demo
 
 Para acceder a la aplicación en modo demo:
