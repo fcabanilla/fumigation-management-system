@@ -93,3 +93,78 @@ Dashboard includes placeholder functions (`handleFeatureClick`) and hardcoded st
 - Maintain the agricultural theme with appropriate icons from react-icons
 - Sessions automatically clean up expired localStorage entries
 - All form inputs should follow the existing validation pattern structure
+
+## AI Agent Specialization (NEW - VS Code 1.105.0)
+
+### Role-Based Instructions
+
+This project now supports specialized AI agent configurations for different development contexts. Based on your task, adopt the appropriate role:
+
+#### 📝 Documentation Work
+
+**Use**: `.github/instructions/technical-writer.instructions.md`
+
+- MANDATORY: Zero markdown linting warnings
+- Maintain English/Spanish synchronization
+- Include agricultural context in all documentation
+- Focus on user workflows from planting to harvest
+
+#### ⚙️ Development & Automation
+
+**Use**: `.github/instructions/dx-engineer.instructions.md`
+
+- Implement automated quality gates
+- Optimize for agricultural seasonal cycles
+- Consider field testing scenarios
+- Automate domain validation
+
+#### 🌍 Translation & Localization
+
+**Use**: `.github/instructions/i18n-specialist.instructions.md`
+
+- Adapt agricultural terminology regionally
+- Ensure cultural appropriateness
+- Maintain content synchronization < 48h
+- Consider regulatory variations
+
+#### 🧪 Testing & Quality
+
+**Use**: `.github/instructions/qa-engineer.instructions.md`
+
+- Test agricultural workflow scenarios
+- Validate safety-critical calculations
+- Ensure field condition performance
+- Test accessibility for agricultural workers
+
+#### 📊 Strategy & Planning
+
+**Use**: `.github/instructions/product-owner.instructions.md`
+
+- Prioritize by agricultural impact
+- Consider seasonal development cycles
+- Validate with agricultural users
+- Balance innovation with practicality
+
+### Quality Standards (MANDATORY)
+
+- **Zero Warnings Policy**: All code and documentation must pass linting
+- **Agricultural Safety**: No compromises on fumigation safety
+- **Performance**: < 3s load times on mobile in field conditions
+- **Accessibility**: Usable with gloved hands in outdoor lighting
+- **Multilingual**: English default + Spanish (.es.md)
+
+### Tools Priority
+
+- `get_errors` - MANDATORY before commits
+- `semantic_search` - Find agricultural content
+- `run_in_terminal` - Execute tests and builds
+- `create_and_run_task` - Set up workflows
+
+### Success Metrics
+
+- Zero production bugs affecting agricultural operations
+- Measurable improvements in fumigation efficiency
+- 100% task completion by farmers
+- Zero safety incidents from incorrect guidance
+
+Remember: Every decision impacts agricultural productivity, farmer livelihoods, and food production. Maintain the highest standards of quality, safety, and agricultural domain accuracy.
