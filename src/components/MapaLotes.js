@@ -1,21 +1,11 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import {
-  MapContainer,
-  TileLayer,
-  Polygon,
-  Popup,
-} from "react-leaflet";
-import * as turf from "@turf/turf";
-import "leaflet/dist/leaflet.css";
-import {
-  FaFilter,
-  FaEye,
-  FaCalculator,
-  FaMapMarkedAlt,
-} from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { MapContainer, TileLayer, Polygon, Popup } from 'react-leaflet';
+import * as turf from '@turf/turf';
+import 'leaflet/dist/leaflet.css';
+import { FaFilter, FaEye, FaCalculator, FaMapMarkedAlt } from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
 
 // Styled Components
 const Container = styled.div`
@@ -71,7 +61,7 @@ const MapWrapper = styled.div`
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #e0e0e0;
-  
+
   .leaflet-container {
     height: 100%;
     width: 100%;
@@ -148,24 +138,25 @@ const ViewButton = styled.button`
 
 // Colores para diferentes cultivos
 const COLORES_CULTIVOS = {
-  'Soja': '#28a745',
-  'Maíz': '#ffc107',
-  'Trigo': '#fd7e14',
-  'Girasol': '#e83e8c',
-  'Sorgo': '#6f42c1',
-  'Avena': '#20c997',
-  'Cebada': '#6c757d',
-  'Otro': '#17a2b8',
+  Soja: '#28a745',
+  Maíz: '#ffc107',
+  Trigo: '#fd7e14',
+  Girasol: '#e83e8c',
+  Sorgo: '#6f42c1',
+  Avena: '#20c997',
+  Cebada: '#6c757d',
+  Otro: '#17a2b8',
 };
 
 const MapaLotes = ({ lotes, onSelectLote }) => {
-  const [filterCultivo, setFilterCultivo] = useState("");
-  const [filterPropietario, setFilterPropietario] = useState("");
+  const [filterCultivo, setFilterCultivo] = useState('');
+  const [filterPropietario, setFilterPropietario] = useState('');
 
   // Filtrar lotes
-  const lotesFiltrados = lotes.filter(lote => {
+  const lotesFiltrados = lotes.filter((lote) => {
     const matchesCultivo = !filterCultivo || lote.cultivo === filterCultivo;
-    const matchesPropietario = !filterPropietario || lote.propietario === filterPropietario;
+    const matchesPropietario =
+      !filterPropietario || lote.propietario === filterPropietario;
     return matchesCultivo && matchesPropietario && lote.geometria;
   });
 
@@ -175,7 +166,7 @@ const MapaLotes = ({ lotes, onSelectLote }) => {
     const totalHectareas = lotesFiltrados.reduce((sum, lote) => {
       if (lote.geometria) {
         try {
-          return sum + (turf.area(lote.geometria) / 10000);
+          return sum + turf.area(lote.geometria) / 10000;
         } catch {
           return sum + (lote.hectareas || 0);
         }
@@ -190,8 +181,12 @@ const MapaLotes = ({ lotes, onSelectLote }) => {
   }, [lotesFiltrados]);
 
   // Obtener opciones únicas para filtros
-  const cultivosDisponibles = [...new Set(lotes.map(lote => lote.cultivo))].filter(Boolean);
-  const propietariosDisponibles = [...new Set(lotes.map(lote => lote.propietario))].filter(Boolean);
+  const cultivosDisponibles = [
+    ...new Set(lotes.map((lote) => lote.cultivo)),
+  ].filter(Boolean);
+  const propietariosDisponibles = [
+    ...new Set(lotes.map((lote) => lote.propietario)),
+  ].filter(Boolean);
 
   // Calcular centro del mapa basado en los lotes
   const mapCenter = React.useMemo(() => {
@@ -246,7 +241,10 @@ const MapaLotes = ({ lotes, onSelectLote }) => {
       return 0;
     }
     try {
-      return Math.round(turf.length(lote.geometria, { units: "kilometers" }) * 100) / 100;
+      return (
+        Math.round(turf.length(lote.geometria, { units: 'kilometers' }) * 100) /
+        100
+      );
     } catch {
       return 0;
     }
@@ -257,14 +255,16 @@ const MapaLotes = ({ lotes, onSelectLote }) => {
       {/* Filtros y estadísticas */}
       <FilterSection>
         <FaFilter />
-        
+
         <FilterSelect
           value={filterCultivo}
           onChange={(e) => setFilterCultivo(e.target.value)}
         >
           <option value="">Todos los cultivos</option>
-          {cultivosDisponibles.map(cultivo => (
-            <option key={cultivo} value={cultivo}>{cultivo}</option>
+          {cultivosDisponibles.map((cultivo) => (
+            <option key={cultivo} value={cultivo}>
+              {cultivo}
+            </option>
           ))}
         </FilterSelect>
 
@@ -273,8 +273,10 @@ const MapaLotes = ({ lotes, onSelectLote }) => {
           onChange={(e) => setFilterPropietario(e.target.value)}
         >
           <option value="">Todos los propietarios</option>
-          {propietariosDisponibles.map(propietario => (
-            <option key={propietario} value={propietario}>{propietario}</option>
+          {propietariosDisponibles.map((propietario) => (
+            <option key={propietario} value={propietario}>
+              {propietario}
+            </option>
           ))}
         </FilterSelect>
 
@@ -293,65 +295,80 @@ const MapaLotes = ({ lotes, onSelectLote }) => {
         <MapContainer
           center={mapCenter}
           zoom={13}
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
 
-          {lotesFiltrados.map(lote => (
-            lote.geometria && lote.geometria.geometry && (
-              <Polygon
-                key={lote.id}
-                positions={convertToLeafletCoordinates(lote.geometria.geometry.coordinates)}
-                color={COLORES_CULTIVOS[lote.cultivo] || COLORES_CULTIVOS['Otro']}
-                fillColor={COLORES_CULTIVOS[lote.cultivo] || COLORES_CULTIVOS['Otro']}
-                fillOpacity={0.4}
-                weight={3}
-              >
-                <Popup>
-                  <PopupContent>
-                    <PopupTitle>
-                      <GiWheat />
-                      {lote.nombre}
-                    </PopupTitle>
-                    
-                    <PopupInfo>
-                      <PopupLabel>Cultivo:</PopupLabel> <PopupValue>{lote.cultivo}</PopupValue>
-                    </PopupInfo>
-                    
-                    <PopupInfo>
-                      <PopupLabel>Propietario:</PopupLabel> <PopupValue>{lote.propietario}</PopupValue>
-                    </PopupInfo>
+          {lotesFiltrados.map(
+            (lote) =>
+              lote.geometria &&
+              lote.geometria.geometry && (
+                <Polygon
+                  key={lote.id}
+                  positions={convertToLeafletCoordinates(
+                    lote.geometria.geometry.coordinates
+                  )}
+                  color={
+                    COLORES_CULTIVOS[lote.cultivo] || COLORES_CULTIVOS['Otro']
+                  }
+                  fillColor={
+                    COLORES_CULTIVOS[lote.cultivo] || COLORES_CULTIVOS['Otro']
+                  }
+                  fillOpacity={0.4}
+                  weight={3}
+                >
+                  <Popup>
+                    <PopupContent>
+                      <PopupTitle>
+                        <GiWheat />
+                        {lote.nombre}
+                      </PopupTitle>
 
-                    {lote.descripcion && (
                       <PopupInfo>
-                        <PopupLabel>Descripción:</PopupLabel> <PopupValue>{lote.descripcion}</PopupValue>
+                        <PopupLabel>Cultivo:</PopupLabel>{' '}
+                        <PopupValue>{lote.cultivo}</PopupValue>
                       </PopupInfo>
-                    )}
 
-                    <PopupStats>
-                      <PopupStatItem>
-                        <PopupStatValue>{calcularAreaLote(lote)} ha</PopupStatValue>
-                        <PopupStatLabel>Área</PopupStatLabel>
-                      </PopupStatItem>
-                      
-                      <PopupStatItem>
-                        <PopupStatValue>{calcularPerimetroLote(lote)} km</PopupStatValue>
-                        <PopupStatLabel>Perímetro</PopupStatLabel>
-                      </PopupStatItem>
-                    </PopupStats>
+                      <PopupInfo>
+                        <PopupLabel>Propietario:</PopupLabel>{' '}
+                        <PopupValue>{lote.propietario}</PopupValue>
+                      </PopupInfo>
 
-                    <ViewButton onClick={() => onSelectLote(lote)}>
-                      <FaEye />
-                      Ver Detalles
-                    </ViewButton>
-                  </PopupContent>
-                </Popup>
-              </Polygon>
-            )
-          ))}
+                      {lote.descripcion && (
+                        <PopupInfo>
+                          <PopupLabel>Descripción:</PopupLabel>{' '}
+                          <PopupValue>{lote.descripcion}</PopupValue>
+                        </PopupInfo>
+                      )}
+
+                      <PopupStats>
+                        <PopupStatItem>
+                          <PopupStatValue>
+                            {calcularAreaLote(lote)} ha
+                          </PopupStatValue>
+                          <PopupStatLabel>Área</PopupStatLabel>
+                        </PopupStatItem>
+
+                        <PopupStatItem>
+                          <PopupStatValue>
+                            {calcularPerimetroLote(lote)} km
+                          </PopupStatValue>
+                          <PopupStatLabel>Perímetro</PopupStatLabel>
+                        </PopupStatItem>
+                      </PopupStats>
+
+                      <ViewButton onClick={() => onSelectLote(lote)}>
+                        <FaEye />
+                        Ver Detalles
+                      </ViewButton>
+                    </PopupContent>
+                  </Popup>
+                </Polygon>
+              )
+          )}
         </MapContainer>
       </MapWrapper>
     </Container>

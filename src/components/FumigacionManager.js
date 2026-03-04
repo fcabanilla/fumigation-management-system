@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import FumigacionesList from "./FumigacionesList";
-import FumigacionForm from "./FumigacionForm";
-import FumigacionView from "./FumigacionView";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import FumigacionesList from './FumigacionesList';
+import FumigacionForm from './FumigacionForm';
+import FumigacionView from './FumigacionView';
 
 // Estados del componente
 const VIEWS = {
-  LIST: "list",
-  FORM: "form",
-  VIEW: "view",
+  LIST: 'list',
+  FORM: 'form',
+  VIEW: 'view',
 };
 
 // Geometrías de ejemplo para trabajos previos
@@ -16,10 +16,10 @@ const getGeometriaEjemplo = (index) => {
   const geometrias = [
     // Campo Norte
     {
-      type: "Feature",
-      properties: { nombre: "Campo Norte", cultivo: "Soja" },
+      type: 'Feature',
+      properties: { nombre: 'Campo Norte', cultivo: 'Soja' },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-58.3816, -34.6037],
@@ -33,10 +33,10 @@ const getGeometriaEjemplo = (index) => {
     },
     // Lote Sur
     {
-      type: "Feature",
-      properties: { nombre: "Lote Sur", cultivo: "Maíz" },
+      type: 'Feature',
+      properties: { nombre: 'Lote Sur', cultivo: 'Maíz' },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-58.396, -34.6118],
@@ -50,10 +50,10 @@ const getGeometriaEjemplo = (index) => {
     },
     // Campo Este
     {
-      type: "Feature",
-      properties: { nombre: "Campo Este", cultivo: "Trigo" },
+      type: 'Feature',
+      properties: { nombre: 'Campo Este', cultivo: 'Trigo' },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-58.375, -34.608],
@@ -73,7 +73,7 @@ const getGeometriaEjemplo = (index) => {
 // Función para cargar fumigaciones desde localStorage
 const getFumigaciones = () => {
   try {
-    const fumigaciones = localStorage.getItem("fumigaciones");
+    const fumigaciones = localStorage.getItem('fumigaciones');
     const data = fumigaciones ? JSON.parse(fumigaciones) : [];
 
     // Si no hay geometrías, agregar algunas de ejemplo
@@ -94,7 +94,7 @@ const getFumigaciones = () => {
 // Función para guardar fumigaciones en localStorage
 const saveFumigaciones = (fumigaciones) => {
   try {
-    localStorage.setItem("fumigaciones", JSON.stringify(fumigaciones));
+    localStorage.setItem('fumigaciones', JSON.stringify(fumigaciones));
   } catch {
     // Error al guardar - continuar silenciosamente
   }

@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import {
   MapContainer,
   TileLayer,
   Polygon,
   useMapEvents,
   Popup,
-} from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import "leaflet-draw/dist/leaflet.draw.css";
-import "leaflet-draw";
-import * as turf from "@turf/turf";
+} from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-draw/dist/leaflet.draw.css';
+import 'leaflet-draw';
+import * as turf from '@turf/turf';
 import {
   FaEdit,
   FaTrash,
@@ -22,7 +22,7 @@ import {
   FaInfoCircle,
   FaSave,
   FaUndo,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 
 // Styled Components
 const EditorContainer = styled.div`
@@ -61,8 +61,8 @@ const ToolbarContainer = styled.div`
 `;
 
 const ToolButton = styled.button`
-  background: ${(props) => (props.active ? "#4a7c59" : "white")};
-  color: ${(props) => (props.active ? "white" : "#4a7c59")};
+  background: ${(props) => (props.active ? '#4a7c59' : 'white')};
+  color: ${(props) => (props.active ? 'white' : '#4a7c59')};
   border: 1px solid #4a7c59;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
@@ -136,10 +136,10 @@ const InfoLabel = styled.div`
 `;
 
 const AlertMessage = styled.div`
-  background: ${(props) => (props.type === "error" ? "#f8d7da" : "#d4edda")};
-  color: ${(props) => (props.type === "error" ? "#721c24" : "#155724")};
+  background: ${(props) => (props.type === 'error' ? '#f8d7da' : '#d4edda')};
+  color: ${(props) => (props.type === 'error' ? '#721c24' : '#155724')};
   border: 1px solid
-    ${(props) => (props.type === "error" ? "#f5c6cb" : "#c3e6cb")};
+    ${(props) => (props.type === 'error' ? '#f5c6cb' : '#c3e6cb')};
   border-radius: 6px;
   padding: 0.5rem;
   margin: 0.5rem 0;
@@ -175,28 +175,35 @@ const DrawingControls = ({ drawingMode, onPolygonCreate, setDrawingMode }) => {
     // Si hay un modo de dibujo activo, agregar el control
     if (drawingMode) {
       const drawControl = new L.Control.Draw({
-        position: "topright",
+        position: 'topright',
         draw: {
-          polygon: drawingMode === "polygon" ? {
-            allowIntersection: false,
-            showArea: true,
-            drawError: {
-              color: '#e1e100',
-              message: '<strong>Error:</strong> ¡Los bordes no pueden cruzarse!'
-            },
-            shapeOptions: {
-              color: '#4a7c59',
-              weight: 3,
-              fillOpacity: 0.3
-            }
-          } : false,
-          rectangle: drawingMode === "rectangle" ? {
-            shapeOptions: {
-              color: '#4a7c59',
-              weight: 3,
-              fillOpacity: 0.3
-            }
-          } : false,
+          polygon:
+            drawingMode === 'polygon'
+              ? {
+                  allowIntersection: false,
+                  showArea: true,
+                  drawError: {
+                    color: '#e1e100',
+                    message:
+                      '<strong>Error:</strong> ¡Los bordes no pueden cruzarse!',
+                  },
+                  shapeOptions: {
+                    color: '#4a7c59',
+                    weight: 3,
+                    fillOpacity: 0.3,
+                  },
+                }
+              : false,
+          rectangle:
+            drawingMode === 'rectangle'
+              ? {
+                  shapeOptions: {
+                    color: '#4a7c59',
+                    weight: 3,
+                    fillOpacity: 0.3,
+                  },
+                }
+              : false,
           circle: false,
           marker: false,
           polyline: false,
@@ -219,9 +226,9 @@ const DrawingControls = ({ drawingMode, onPolygonCreate, setDrawingMode }) => {
       const handleCreated = (e) => {
         const layer = e.layer;
         drawnItems.addLayer(layer);
-        
+
         const geojson = layer.toGeoJSON();
-        
+
         if (onPolygonCreate) {
           onPolygonCreate(geojson);
         }
@@ -243,7 +250,14 @@ const DrawingControls = ({ drawingMode, onPolygonCreate, setDrawingMode }) => {
         }
       };
     }
-  }, [map, drawingMode, onPolygonCreate, setDrawingMode, drawnItems, activeDrawControl]);
+  }, [
+    map,
+    drawingMode,
+    onPolygonCreate,
+    setDrawingMode,
+    drawnItems,
+    activeDrawControl,
+  ]);
 
   return null;
 };
@@ -261,15 +275,20 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
 
   // Calcular centro del mapa basado en la geometría o usar Viale como defecto
   const mapCenter = React.useMemo(() => {
-    if (geometry && geometry.geometry && geometry.geometry.coordinates && geometry.geometry.coordinates[0]) {
+    if (
+      geometry &&
+      geometry.geometry &&
+      geometry.geometry.coordinates &&
+      geometry.geometry.coordinates[0]
+    ) {
       try {
         const coords = geometry.geometry.coordinates[0];
         const lats = coords.map(([lng, lat]) => lat);
         const lngs = coords.map(([lng, lat]) => lng);
-        
+
         const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2;
         const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
-        
+
         return [centerLat, centerLng];
       } catch {
         return [-31.87, -60.01]; // Fallback a Viale, Entre Ríos
@@ -280,21 +299,26 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
 
   // Calcular zoom adecuado basado en la geometría
   const mapZoom = React.useMemo(() => {
-    if (geometry && geometry.geometry && geometry.geometry.coordinates && geometry.geometry.coordinates[0]) {
+    if (
+      geometry &&
+      geometry.geometry &&
+      geometry.geometry.coordinates &&
+      geometry.geometry.coordinates[0]
+    ) {
       try {
         const coords = geometry.geometry.coordinates[0];
         const lats = coords.map(([lng, lat]) => lat);
         const lngs = coords.map(([lng, lat]) => lng);
-        
+
         const latRange = Math.max(...lats) - Math.min(...lats);
         const lngRange = Math.max(...lngs) - Math.min(...lngs);
         const maxRange = Math.max(latRange, lngRange);
-        
+
         // Ajustar zoom según el rango de coordenadas
-        if (maxRange > 0.1) return 10;      // Lotes muy grandes
-        if (maxRange > 0.05) return 12;     // Lotes grandes 
-        if (maxRange > 0.01) return 14;     // Lotes medianos
-        return 16;                          // Lotes pequeños
+        if (maxRange > 0.1) {return 10;} // Lotes muy grandes
+        if (maxRange > 0.05) {return 12;} // Lotes grandes
+        if (maxRange > 0.01) {return 14;} // Lotes medianos
+        return 16; // Lotes pequeños
       } catch {
         return 13;
       }
@@ -313,7 +337,7 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
     }
 
     const area = turf.area(geometry) / 10000; // Convertir a hectáreas
-    const perimetro = turf.length(geometry, { units: "kilometers" });
+    const perimetro = turf.length(geometry, { units: 'kilometers' });
     const vertices = geometry.geometry.coordinates[0].length - 1; // -1 porque el último punto es igual al primero
 
     return {
@@ -325,10 +349,10 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
 
   const handlePolygonCreate = (geojson) => {
     const newGeometry = {
-      type: "Feature",
+      type: 'Feature',
       properties: {
-        nombre: "Campo Nuevo",
-        cultivo: "Por definir",
+        nombre: 'Campo Nuevo',
+        cultivo: 'Por definir',
       },
       geometry: geojson.geometry,
     };
@@ -338,7 +362,7 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
     }
 
     setAlertMessage({
-      type: "success",
+      type: 'success',
       message: `Polígono creado exitosamente. Área: ${
         Math.round((turf.area(newGeometry) / 10000) * 100) / 100
       } hectáreas`,
@@ -358,15 +382,15 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
 
     if (newMode) {
       setAlertMessage({
-        type: "info",
+        type: 'info',
         message: `Modo ${
-          mode === "polygon" ? "polígono" : "rectángulo"
+          mode === 'polygon' ? 'polígono' : 'rectángulo'
         } activado. Usa las herramientas que aparecen en el mapa para dibujar.`,
       });
     } else {
       setAlertMessage({
-        type: "info",
-        message: "Modo de dibujo desactivado.",
+        type: 'info',
+        message: 'Modo de dibujo desactivado.',
       });
       setTimeout(() => setAlertMessage(null), 2000);
     }
@@ -380,8 +404,8 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
       onChange(null);
     }
     setAlertMessage({
-      type: "info",
-      message: "Geometría eliminada",
+      type: 'info',
+      message: 'Geometría eliminada',
     });
   };
 
@@ -390,8 +414,8 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
       onChange(tempPolygon);
       setTempPolygon(null);
       setAlertMessage({
-        type: "success",
-        message: "Geometría guardada exitosamente",
+        type: 'success',
+        message: 'Geometría guardada exitosamente',
       });
     }
   };
@@ -410,7 +434,7 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
         {!readonly && (
           <div>
             {geometry && (
-              <span style={{ fontSize: "0.9rem", opacity: 0.9 }}>
+              <span style={{ fontSize: '0.9rem', opacity: 0.9 }}>
                 {estadisticas.area} ha
               </span>
             )}
@@ -421,16 +445,16 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
       {!readonly && (
         <ToolbarContainer>
           <ToolButton
-            active={drawingMode === "polygon"}
-            onClick={() => handleStartDrawing("polygon")}
+            active={drawingMode === 'polygon'}
+            onClick={() => handleStartDrawing('polygon')}
           >
             <FaDrawPolygon />
             Polígono
           </ToolButton>
 
           <ToolButton
-            active={drawingMode === "rectangle"}
-            onClick={() => handleStartDrawing("rectangle")}
+            active={drawingMode === 'rectangle'}
+            onClick={() => handleStartDrawing('rectangle')}
           >
             <FaSquare />
             Rectángulo
@@ -446,8 +470,8 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
               onClick={() => {
                 setDrawingMode(null);
                 setAlertMessage({
-                  type: "info",
-                  message: "Modo de dibujo cancelado",
+                  type: 'info',
+                  message: 'Modo de dibujo cancelado',
                 });
                 setTimeout(() => setAlertMessage(null), 2000);
               }}
@@ -465,11 +489,11 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
           )}
 
           <div
-            style={{ marginLeft: "auto", fontSize: "0.8rem", color: "#666" }}
+            style={{ marginLeft: 'auto', fontSize: '0.8rem', color: '#666' }}
           >
             {drawingMode ? (
               <span>
-                🎯 Modo {drawingMode === "polygon" ? "Polígono" : "Rectángulo"}{" "}
+                🎯 Modo {drawingMode === 'polygon' ? 'Polígono' : 'Rectángulo'}{' '}
                 activo
               </span>
             ) : (
@@ -489,7 +513,7 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
         <MapContainer
           center={mapCenter}
           zoom={mapZoom}
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -516,7 +540,7 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
             >
               <Popup>
                 <div>
-                  <h4>{geometry.properties?.nombre || "Campo"}</h4>
+                  <h4>{geometry.properties?.nombre || 'Campo'}</h4>
                   <p>
                     <strong>Área:</strong> {estadisticas.area} hectáreas
                   </p>
@@ -578,7 +602,7 @@ const MapaEditor = ({ geometry, onChange, readonly = false, height = 400 }) => {
           </InfoItem>
 
           <InfoItem>
-            <InfoValue>{geometry ? "Definido" : "Sin definir"}</InfoValue>
+            <InfoValue>{geometry ? 'Definido' : 'Sin definir'}</InfoValue>
             <InfoLabel>Estado</InfoLabel>
           </InfoItem>
         </InfoGrid>

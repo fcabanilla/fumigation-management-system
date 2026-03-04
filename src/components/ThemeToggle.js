@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { useTheme } from "../contexts/ThemeContext";
-import { FaSun, FaMoon } from "react-icons/fa";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useTheme } from '../contexts/ThemeContext';
+import { FaSun, FaMoon } from 'react-icons/fa';
 
 const ToggleButton = styled.button`
   background: ${(props) => props.theme.colors.surface};
@@ -49,13 +49,13 @@ const IconWrapper = styled.div`
   transition: all 0.4s ease;
   transform: ${(props) =>
     props.isVisible
-      ? "translateY(0) rotate(0deg)"
-      : "translateY(20px) rotate(90deg)"};
+      ? 'translateY(0) rotate(0deg)'
+      : 'translateY(20px) rotate(90deg)'};
   opacity: ${(props) => (props.isVisible ? 1 : 0)};
   position: absolute;
 `;
 
-const ThemeToggle = ({ size = "normal", showLabel = false }) => {
+const ThemeToggle = ({ size = 'normal', showLabel = false }) => {
   const { theme, toggleTheme, isLight } = useTheme();
 
   return (
@@ -63,7 +63,7 @@ const ThemeToggle = ({ size = "normal", showLabel = false }) => {
       <ToggleButton
         onClick={toggleTheme}
         theme={theme}
-        title={`Cambiar a modo ${isLight ? "oscuro" : "claro"}`}
+        title={`Cambiar a modo ${isLight ? 'oscuro' : 'claro'}`}
       >
         <IconWrapper isVisible={isLight}>
           <FaSun />
@@ -75,12 +75,12 @@ const ThemeToggle = ({ size = "normal", showLabel = false }) => {
       {showLabel && (
         <span
           style={{
-            marginLeft: "0.5rem",
-            fontSize: "0.9rem",
+            marginLeft: '0.5rem',
+            fontSize: '0.9rem',
             color: theme.colors.textSecondary,
           }}
         >
-          {isLight ? "Claro" : "Oscuro"}
+          {isLight ? 'Claro' : 'Oscuro'}
         </span>
       )}
     </ToggleWrapper>

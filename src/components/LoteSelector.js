@@ -1,11 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { useTheme } from "../contexts/ThemeContext";
-import useLotes from "../hooks/useLotes";
-import { FaMapMarkedAlt, FaPlus, FaEdit, FaEye } from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
-import * as turf from "@turf/turf";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useTheme } from '../contexts/ThemeContext';
+import useLotes from '../hooks/useLotes';
+import { FaMapMarkedAlt, FaPlus, FaEdit, FaEye } from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
+import * as turf from '@turf/turf';
 
 // Styled Components
 const SelectorContainer = styled.div`
@@ -74,7 +74,7 @@ const LoteItem = styled.div`
   justify-content: space-between;
   align-items: center;
   background: ${(props) =>
-    props.selected ? `${props.theme.colors.primary}15` : "transparent"};
+    props.selected ? `${props.theme.colors.primary}15` : 'transparent'};
 
   &:hover {
     background: ${(props) =>
@@ -206,7 +206,7 @@ const LoteSelector = ({
 
     try {
       const area = turf.area(lote.geometria) / 10000; // Hectáreas
-      const perimetro = turf.length(lote.geometria, { units: "kilometers" });
+      const perimetro = turf.length(lote.geometria, { units: 'kilometers' });
       const vertices = lote.geometria.geometry.coordinates[0].length - 1;
 
       return {
@@ -220,7 +220,7 @@ const LoteSelector = ({
   };
 
   const handleLoteClick = (lote) => {
-    if (mode === "existing") {
+    if (mode === 'existing') {
       onLoteSelect(lote);
     }
   };
@@ -245,8 +245,8 @@ const LoteSelector = ({
 
       <ModeSelector>
         <ModeButton
-          active={mode === "new"}
-          onClick={() => onModeChange("new")}
+          active={mode === 'new'}
+          onClick={() => onModeChange('new')}
           theme={theme}
         >
           <FaPlus />
@@ -254,8 +254,8 @@ const LoteSelector = ({
         </ModeButton>
 
         <ModeButton
-          active={mode === "existing"}
-          onClick={() => onModeChange("existing")}
+          active={mode === 'existing'}
+          onClick={() => onModeChange('existing')}
           theme={theme}
         >
           <GiWheat />
@@ -263,7 +263,7 @@ const LoteSelector = ({
         </ModeButton>
       </ModeSelector>
 
-      {mode === "existing" && (
+      {mode === 'existing' && (
         <>
           {lotesDisponibles.length === 0 ? (
             <EmptyState theme={theme}>
@@ -350,10 +350,10 @@ const LoteSelector = ({
         </>
       )}
 
-      {mode === "new" && onNewLote && (
-        <div style={{ textAlign: "center", padding: "1rem" }}>
+      {mode === 'new' && onNewLote && (
+        <div style={{ textAlign: 'center', padding: '1rem' }}>
           <p
-            style={{ color: theme.colors.textSecondary, marginBottom: "1rem" }}
+            style={{ color: theme.colors.textSecondary, marginBottom: '1rem' }}
           >
             Usa las herramientas de dibujo en el mapa para crear un nuevo campo
           </p>
@@ -363,8 +363,8 @@ const LoteSelector = ({
             style={{
               background: theme.colors.primary,
               color: theme.colors.textOnPrimary,
-              padding: "0.7rem 1.2rem",
-              borderRadius: "8px",
+              padding: '0.7rem 1.2rem',
+              borderRadius: '8px',
             }}
           >
             <FaEdit />
@@ -377,7 +377,7 @@ const LoteSelector = ({
 };
 
 LoteSelector.propTypes = {
-  mode: PropTypes.oneOf(["new", "existing"]).isRequired,
+  mode: PropTypes.oneOf(['new', 'existing']).isRequired,
   onModeChange: PropTypes.func.isRequired,
   selectedLoteId: PropTypes.number,
   onLoteSelect: PropTypes.func.isRequired,

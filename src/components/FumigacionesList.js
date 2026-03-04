@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { useLotes } from "../hooks/useLotes";
-import LotePreview from "./LotePreview";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useLotes } from '../hooks/useLotes';
+import LotePreview from './LotePreview';
 import {
   FaPlus,
   FaEdit,
@@ -10,8 +10,8 @@ import {
   FaEye,
   FaFilter,
   FaClock,
-} from "react-icons/fa";
-import { GiSpray } from "react-icons/gi";
+} from 'react-icons/fa';
+import { GiSpray } from 'react-icons/gi';
 
 // Styled Components
 const FumigacionesContainer = styled.div`
@@ -170,7 +170,7 @@ const FumigacionCard = styled.div`
   padding: 1.5rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
-  border-left: 5px solid ${(props) => props.statusColor || "#4a7c59"};
+  border-left: 5px solid ${(props) => props.statusColor || '#4a7c59'};
 
   &:hover {
     transform: translateY(-5px);
@@ -199,8 +199,8 @@ const StatusBadge = styled.span`
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: ${(props) => props.background || "#e0e0e0"};
-  color: ${(props) => props.color || "#666"};
+  background: ${(props) => props.background || '#e0e0e0'};
+  color: ${(props) => props.color || '#666'};
 `;
 
 const CardContent = styled.div`
@@ -261,35 +261,35 @@ const EmptyDescription = styled.p`
 // Estados y colores de fumigación
 const ESTADOS_FUMIGACION = {
   PLANIFICADA: {
-    label: "Planificada",
-    color: "#fff",
-    background: "#2196f3",
-    statusColor: "#2196f3",
+    label: 'Planificada',
+    color: '#fff',
+    background: '#2196f3',
+    statusColor: '#2196f3',
   },
   EN_PROCESO: {
-    label: "En Proceso",
-    color: "#fff",
-    background: "#ff9800",
-    statusColor: "#ff9800",
+    label: 'En Proceso',
+    color: '#fff',
+    background: '#ff9800',
+    statusColor: '#ff9800',
   },
   COMPLETADA: {
-    label: "Completada",
-    color: "#fff",
-    background: "#4caf50",
-    statusColor: "#4caf50",
+    label: 'Completada',
+    color: '#fff',
+    background: '#4caf50',
+    statusColor: '#4caf50',
   },
   CANCELADA: {
-    label: "Cancelada",
-    color: "#fff",
-    background: "#f44336",
-    statusColor: "#f44336",
+    label: 'Cancelada',
+    color: '#fff',
+    background: '#f44336',
+    statusColor: '#f44336',
   },
 };
 
 // Función para obtener fumigaciones desde localStorage
 const getFumigaciones = () => {
   try {
-    const fumigaciones = localStorage.getItem("fumigaciones");
+    const fumigaciones = localStorage.getItem('fumigaciones');
     return fumigaciones ? JSON.parse(fumigaciones) : [];
   } catch {
     return [];
@@ -299,7 +299,7 @@ const getFumigaciones = () => {
 // Función para guardar fumigaciones en localStorage
 const saveFumigaciones = (fumigaciones) => {
   try {
-    localStorage.setItem("fumigaciones", JSON.stringify(fumigaciones));
+    localStorage.setItem('fumigaciones', JSON.stringify(fumigaciones));
   } catch {
     // Error al guardar - continuar silenciosamente
   }
@@ -308,67 +308,67 @@ const saveFumigaciones = (fumigaciones) => {
 // Datos de ejemplo para demostración
 const fumigacionesEjemplo = [
   {
-    id: "1",
-    nombre: "Tratamiento Preventivo Campo Norte",
-    campo: "Campo Norte - Lote A",
-    tipoTratamiento: "Preventivo",
-    producto: "Insecticida Organofosforado",
+    id: '1',
+    nombre: 'Tratamiento Preventivo Campo Norte',
+    campo: 'Campo Norte - Lote A',
+    tipoTratamiento: 'Preventivo',
+    producto: 'Insecticida Organofosforado',
     dosis: 2.5,
-    fechaPlanificada: "2025-10-15",
+    fechaPlanificada: '2025-10-15',
     fechaRealizada: null,
-    estado: "PLANIFICADA",
+    estado: 'PLANIFICADA',
     hectareas: 45.5,
     costo: 12500,
-    responsable: "Juan Pérez",
-    equipoUtilizado: "Pulverizador Autopropulsado",
-    observaciones: "Aplicar en horas de baja temperatura, evitar viento.",
-    createdAt: "2025-09-27T10:30:00",
-    updatedAt: "2025-09-27T10:30:00",
+    responsable: 'Juan Pérez',
+    equipoUtilizado: 'Pulverizador Autopropulsado',
+    observaciones: 'Aplicar en horas de baja temperatura, evitar viento.',
+    createdAt: '2025-09-27T10:30:00',
+    updatedAt: '2025-09-27T10:30:00',
   },
   {
-    id: "2",
-    nombre: "Control de Plagas Campo Sur",
-    campo: "Campo Sur - Lote B",
-    tipoTratamiento: "Correctivo",
-    producto: "Fungicida Sistémico",
+    id: '2',
+    nombre: 'Control de Plagas Campo Sur',
+    campo: 'Campo Sur - Lote B',
+    tipoTratamiento: 'Correctivo',
+    producto: 'Fungicida Sistémico',
     dosis: 1.8,
-    fechaPlanificada: "2025-09-30",
-    fechaRealizada: "2025-09-30",
-    estado: "COMPLETADA",
+    fechaPlanificada: '2025-09-30',
+    fechaRealizada: '2025-09-30',
+    estado: 'COMPLETADA',
     hectareas: 32.0,
     costo: 8900,
-    responsable: "María González",
-    equipoUtilizado: "Pulverizador de Arrastre",
+    responsable: 'María González',
+    equipoUtilizado: 'Pulverizador de Arrastre',
     observaciones:
-      "Aplicación completada exitosamente. Resultado satisfactorio.",
-    createdAt: "2025-09-20T14:15:00",
-    updatedAt: "2025-09-30T16:45:00",
+      'Aplicación completada exitosamente. Resultado satisfactorio.',
+    createdAt: '2025-09-20T14:15:00',
+    updatedAt: '2025-09-30T16:45:00',
   },
   {
-    id: "3",
-    nombre: "Fumigación Aérea Cultivo Soja",
-    campo: "Campo Centro - Multiple",
-    tipoTratamiento: "Masivo",
-    producto: "Herbicida Post-emergente",
+    id: '3',
+    nombre: 'Fumigación Aérea Cultivo Soja',
+    campo: 'Campo Centro - Multiple',
+    tipoTratamiento: 'Masivo',
+    producto: 'Herbicida Post-emergente',
     dosis: 3.2,
-    fechaPlanificada: "2025-10-01",
+    fechaPlanificada: '2025-10-01',
     fechaRealizada: null,
-    estado: "EN_PROCESO",
+    estado: 'EN_PROCESO',
     hectareas: 125.0,
     costo: 35600,
-    responsable: "Carlos Rodriguez",
-    equipoUtilizado: "Avión Fumigador",
-    observaciones: "Coordinación con torre de control completada.",
-    createdAt: "2025-09-25T09:00:00",
-    updatedAt: "2025-10-01T08:00:00",
+    responsable: 'Carlos Rodriguez',
+    equipoUtilizado: 'Avión Fumigador',
+    observaciones: 'Coordinación con torre de control completada.',
+    createdAt: '2025-09-25T09:00:00',
+    updatedAt: '2025-10-01T08:00:00',
   },
 ];
 
 const FumigacionesList = ({ onEdit, onView, onDelete, onNew }) => {
   const [fumigaciones, setFumigaciones] = useState([]);
   const [filteredFumigaciones, setFilteredFumigaciones] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("TODOS");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('TODOS');
   const [isLoading, setIsLoading] = useState(true);
   const { lotes } = useLotes();
 
@@ -421,7 +421,7 @@ const FumigacionesList = ({ onEdit, onView, onDelete, onNew }) => {
     }
 
     // Filtro por estado
-    if (statusFilter !== "TODOS") {
+    if (statusFilter !== 'TODOS') {
       filtered = filtered.filter(
         (fumigacion) => fumigacion.estado === statusFilter
       );
@@ -434,7 +434,7 @@ const FumigacionesList = ({ onEdit, onView, onDelete, onNew }) => {
     // Usar confirm personalizado para evitar ESLint error
     // Confirmación para eliminar fumigación
     // eslint-disable-next-line no-restricted-globals, no-alert
-    if (confirm("¿Estás seguro de que deseas eliminar esta fumigación?")) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta fumigación?')) {
       const updatedFumigaciones = fumigaciones.filter((f) => f.id !== id);
       setFumigaciones(updatedFumigaciones);
       saveFumigaciones(updatedFumigaciones);
@@ -446,28 +446,28 @@ const FumigacionesList = ({ onEdit, onView, onDelete, onNew }) => {
 
   const formatDate = (dateString) => {
     if (!dateString) {
-      return "No definida";
+      return 'No definida';
     }
     const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
     });
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
     }).format(amount);
   };
 
   if (isLoading) {
     return (
       <FumigacionesContainer>
-        <div style={{ textAlign: "center", padding: "4rem" }}>
-          <GiSpray style={{ fontSize: "3rem", color: "#4a7c59" }} />
+        <div style={{ textAlign: 'center', padding: '4rem' }}>
+          <GiSpray style={{ fontSize: '3rem', color: '#4a7c59' }} />
           <p>Cargando fumigaciones...</p>
         </div>
       </FumigacionesContainer>
@@ -566,7 +566,7 @@ const FumigacionesList = ({ onEdit, onView, onDelete, onNew }) => {
                   <InfoRow>
                     <InfoIcon>📏</InfoIcon>
                     <span>
-                      {fumigacion.hectareas} ha -{" "}
+                      {fumigacion.hectareas} ha -{' '}
                       {formatCurrency(fumigacion.costo)}
                     </span>
                   </InfoRow>
@@ -609,16 +609,16 @@ const FumigacionesList = ({ onEdit, onView, onDelete, onNew }) => {
               <GiSpray />
             </EmptyIcon>
             <EmptyTitle>
-              {searchTerm || statusFilter !== "TODOS"
-                ? "No se encontraron fumigaciones"
-                : "No hay fumigaciones registradas"}
+              {searchTerm || statusFilter !== 'TODOS'
+                ? 'No se encontraron fumigaciones'
+                : 'No hay fumigaciones registradas'}
             </EmptyTitle>
             <EmptyDescription>
-              {searchTerm || statusFilter !== "TODOS"
-                ? "Intenta modificar los filtros de búsqueda para encontrar lo que buscas."
-                : "Comienza creando tu primera fumigación para gestionar tus tratamientos agrícolas."}
+              {searchTerm || statusFilter !== 'TODOS'
+                ? 'Intenta modificar los filtros de búsqueda para encontrar lo que buscas.'
+                : 'Comienza creando tu primera fumigación para gestionar tus tratamientos agrícolas.'}
             </EmptyDescription>
-            {!searchTerm && statusFilter === "TODOS" && (
+            {!searchTerm && statusFilter === 'TODOS' && (
               <PrimaryButton onClick={onNew}>
                 <FaPlus />
                 Crear Primera Fumigación

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import * as turf from "@turf/turf";
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import * as turf from '@turf/turf';
 
 // Componente para ajustar el mapa cuando se renderiza la geometría
 const MapController = ({ geometry, bounds }) => {
@@ -35,7 +35,7 @@ MapController.propTypes = {
 };
 
 // Componente solo para visualizar geometrías (sin edición)
-const MapaViewer = ({ geometry, height = "300px", zoom = 13 }) => {
+const MapaViewer = ({ geometry, height = '300px', zoom = 13 }) => {
   const [mapKey, setMapKey] = useState(Date.now());
 
   // Configurar el centro y zoom basado en la geometría
@@ -95,10 +95,10 @@ const MapaViewer = ({ geometry, height = "300px", zoom = 13 }) => {
 
   // Estilo para la geometría
   const geoJsonStyle = {
-    color: "#4a7c59",
+    color: '#4a7c59',
     weight: 3,
     opacity: 1,
-    fillColor: "#4a7c59",
+    fillColor: '#4a7c59',
     fillOpacity: 0.25,
   };
 
@@ -107,13 +107,13 @@ const MapaViewer = ({ geometry, height = "300px", zoom = 13 }) => {
       <div
         style={{
           height,
-          width: "100%",
-          borderRadius: "8px",
-          backgroundColor: "#f5f5f5",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#666",
+          width: '100%',
+          borderRadius: '8px',
+          backgroundColor: '#f5f5f5',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#666',
         }}
       >
         Sin geometría para mostrar
@@ -125,11 +125,11 @@ const MapaViewer = ({ geometry, height = "300px", zoom = 13 }) => {
     <div
       style={{
         height,
-        width: "100%",
-        borderRadius: "8px",
-        overflow: "hidden",
-        position: "relative",
-        border: "1px solid #ddd",
+        width: '100%',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        position: 'relative',
+        border: '1px solid #ddd',
       }}
     >
       <MapContainer
@@ -137,8 +137,8 @@ const MapaViewer = ({ geometry, height = "300px", zoom = 13 }) => {
         center={mapConfig.center}
         zoom={mapConfig.zoom}
         style={{
-          height: "100%",
-          width: "100%",
+          height: '100%',
+          width: '100%',
         }}
         zoomControl={true}
         scrollWheelZoom={true}

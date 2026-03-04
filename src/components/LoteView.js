@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { useTheme } from "../contexts/ThemeContext";
-import MapaViewer from "./MapaViewer";
-import * as turf from "@turf/turf";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useTheme } from '../contexts/ThemeContext';
+import MapaViewer from './MapaViewer';
+import * as turf from '@turf/turf';
 import {
   FaEdit,
   FaTrash,
@@ -11,8 +11,8 @@ import {
   FaCalendarAlt,
   FaUser,
   FaCalculator,
-} from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
+} from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
 
 // Styled Components
 const Container = styled.div`
@@ -98,12 +98,12 @@ const ContentGrid = styled.div`
 `;
 
 const InfoSection = styled.div`
-  background: ${(props) => props.theme?.colors?.surface || "white"};
+  background: ${(props) => props.theme?.colors?.surface || 'white'};
   border-radius: 12px;
   padding: 1.5rem;
-  border: 1px solid ${(props) => props.theme?.colors?.border || "#e0e0e0"};
+  border: 1px solid ${(props) => props.theme?.colors?.border || '#e0e0e0'};
   box-shadow: ${(props) =>
-    props.theme?.colors?.shadow || "0 2px 8px rgba(0, 0, 0, 0.05)"};
+    props.theme?.colors?.shadow || '0 2px 8px rgba(0, 0, 0, 0.05)'};
 `;
 
 const SectionTitle = styled.h3`
@@ -166,32 +166,32 @@ const StatsGrid = styled.div`
 
 const StatItem = styled.div`
   text-align: center;
-  background: ${(props) => props.theme?.colors?.surface || "white"};
+  background: ${(props) => props.theme?.colors?.surface || 'white'};
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid ${(props) => props.theme?.colors?.border || "#e0e0e0"};
+  border: 1px solid ${(props) => props.theme?.colors?.border || '#e0e0e0'};
 `;
 
 const StatValue = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
-  color: ${(props) => props.theme?.colors?.primary || "#4a7c59"};
+  color: ${(props) => props.theme?.colors?.primary || '#4a7c59'};
   margin-bottom: 0.2rem;
 `;
 
 const StatLabel = styled.div`
   font-size: 0.8rem;
-  color: ${(props) => props.theme?.colors?.textSecondary || "#666"};
+  color: ${(props) => props.theme?.colors?.textSecondary || '#666'};
 `;
 
 const MapSection = styled.div`
   grid-column: 1 / -1;
-  background: ${(props) => props.theme?.colors?.surface || "white"};
+  background: ${(props) => props.theme?.colors?.surface || 'white'};
   border-radius: 12px;
   padding: 1.5rem;
-  border: 1px solid ${(props) => props.theme?.colors?.border || "#e0e0e0"};
+  border: 1px solid ${(props) => props.theme?.colors?.border || '#e0e0e0'};
   box-shadow: ${(props) =>
-    props.theme?.colors?.shadow || "0 2px 8px rgba(0, 0, 0, 0.05)"};
+    props.theme?.colors?.shadow || '0 2px 8px rgba(0, 0, 0, 0.05)'};
 `;
 
 const EmptyGeometry = styled.div`
@@ -223,7 +223,7 @@ const LoteView = ({ lote, onEdit, onDelete }) => {
     }
 
     const area = turf.area(lote.geometria) / 10000; // Convertir a hectáreas
-    const perimetro = turf.length(lote.geometria, { units: "kilometers" });
+    const perimetro = turf.length(lote.geometria, { units: 'kilometers' });
     const vertices = lote.geometria.geometry.coordinates[0].length - 1;
 
     return {
@@ -322,10 +322,10 @@ const LoteView = ({ lote, onEdit, onDelete }) => {
               <InfoContent>
                 <InfoLabel>Fecha de Creación</InfoLabel>
                 <InfoValue>
-                  {new Date(lote.fechaCreacion).toLocaleDateString("es-ES", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
+                  {new Date(lote.fechaCreacion).toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   })}
                 </InfoValue>
               </InfoContent>
@@ -348,7 +348,7 @@ const LoteView = ({ lote, onEdit, onDelete }) => {
               <InfoContent>
                 <InfoLabel>Estado de Geometría</InfoLabel>
                 <InfoValue>
-                  {lote.geometria ? "✅ Definida" : "❌ Sin definir"}
+                  {lote.geometria ? '✅ Definida' : '❌ Sin definir'}
                 </InfoValue>
               </InfoContent>
             </InfoItem>

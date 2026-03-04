@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import LotesList from "./LotesList";
-import LoteForm from "./LoteForm";
-import LoteView from "./LoteView";
-import MapaLotes from "./MapaLotes";
-import { cargarLotesViale } from "../data/lotesViale";
-import { FaPlus, FaEdit, FaMap, FaArrowLeft } from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import LotesList from './LotesList';
+import LoteForm from './LoteForm';
+import LoteView from './LoteView';
+import MapaLotes from './MapaLotes';
+import { cargarLotesViale } from '../data/lotesViale';
+import { FaPlus, FaEdit, FaMap, FaArrowLeft } from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
 
 // Estados del componente
 const VIEWS = {
-  LIST: "list",
-  FORM: "form",
-  VIEW: "view",
-  MAP: "map",
+  LIST: 'list',
+  FORM: 'form',
+  VIEW: 'view',
+  MAP: 'map',
 };
 
 // Styled Components
@@ -58,12 +58,12 @@ const ButtonGroup = styled.div`
 
 const ActionButton = styled.button`
   background: ${(props) =>
-    props.variant === "secondary"
-      ? "rgba(255,255,255,0.2)"
-      : "rgba(255,255,255,0.9)"};
-  color: ${(props) => (props.variant === "secondary" ? "white" : "#4a7c59")};
+    props.variant === 'secondary'
+      ? 'rgba(255,255,255,0.2)'
+      : 'rgba(255,255,255,0.9)'};
+  color: ${(props) => (props.variant === 'secondary' ? 'white' : '#4a7c59')};
   border: ${(props) =>
-    props.variant === "secondary" ? "1px solid rgba(255,255,255,0.3)" : "none"};
+    props.variant === 'secondary' ? '1px solid rgba(255,255,255,0.3)' : 'none'};
   padding: 0.8rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
@@ -75,7 +75,7 @@ const ActionButton = styled.button`
 
   &:hover {
     background: ${(props) =>
-      props.variant === "secondary" ? "rgba(255,255,255,0.3)" : "white"};
+      props.variant === 'secondary' ? 'rgba(255,255,255,0.3)' : 'white'};
     transform: translateY(-2px);
   }
 
@@ -94,7 +94,7 @@ const ContentArea = styled.div`
 // Función para guardar lotes en localStorage
 const saveLotes = (lotes) => {
   try {
-    localStorage.setItem("lotes", JSON.stringify(lotes));
+    localStorage.setItem('lotes', JSON.stringify(lotes));
   } catch {
     // Error al guardar - continuar silenciosamente
   }
@@ -104,20 +104,20 @@ const saveLotes = (lotes) => {
 const LOTES_INICIALES = [
   {
     id: 1,
-    nombre: "Campo Norte Principal",
-    descripcion: "Lote principal ubicado al norte de la propiedad",
+    nombre: 'Campo Norte Principal',
+    descripcion: 'Lote principal ubicado al norte de la propiedad',
     hectareas: 45.5,
-    cultivo: "Soja",
-    propietario: "Establecimiento San José",
-    fechaCreacion: "2024-01-15",
+    cultivo: 'Soja',
+    propietario: 'Establecimiento San José',
+    fechaCreacion: '2024-01-15',
     geometria: {
-      type: "Feature",
+      type: 'Feature',
       properties: {
-        nombre: "Campo Norte Principal",
-        cultivo: "Soja",
+        nombre: 'Campo Norte Principal',
+        cultivo: 'Soja',
       },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-60.01, -31.87],
@@ -132,20 +132,20 @@ const LOTES_INICIALES = [
   },
   {
     id: 2,
-    nombre: "Lote Sur Chico",
-    descripcion: "Lote pequeño destinado a cultivos de rotación",
+    nombre: 'Lote Sur Chico',
+    descripcion: 'Lote pequeño destinado a cultivos de rotación',
     hectareas: 22.3,
-    cultivo: "Maíz",
-    propietario: "Establecimiento San José",
-    fechaCreacion: "2024-01-20",
+    cultivo: 'Maíz',
+    propietario: 'Establecimiento San José',
+    fechaCreacion: '2024-01-20',
     geometria: {
-      type: "Feature",
+      type: 'Feature',
       properties: {
-        nombre: "Lote Sur Chico",
-        cultivo: "Maíz",
+        nombre: 'Lote Sur Chico',
+        cultivo: 'Maíz',
       },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-60.015, -31.875],
@@ -196,7 +196,7 @@ const LoteManager = ({ onBack }) => {
       const nuevoLote = {
         ...loteData,
         id: Date.now(),
-        fechaCreacion: new Date().toISOString().split("T")[0],
+        fechaCreacion: new Date().toISOString().split('T')[0],
       };
       lotesActualizados = [...lotes, nuevoLote];
     }
@@ -286,15 +286,15 @@ const LoteManager = ({ onBack }) => {
   const getPageTitle = () => {
     switch (currentView) {
       case VIEWS.LIST:
-        return "Gestión de Lotes";
+        return 'Gestión de Lotes';
       case VIEWS.FORM:
-        return isEditing ? "Editar Lote" : "Nuevo Lote";
+        return isEditing ? 'Editar Lote' : 'Nuevo Lote';
       case VIEWS.VIEW:
         return `Lote: ${selectedLote?.nombre}`;
       case VIEWS.MAP:
-        return "Mapa de Lotes";
+        return 'Mapa de Lotes';
       default:
-        return "Lotes";
+        return 'Lotes';
     }
   };
 
@@ -310,7 +310,7 @@ const LoteManager = ({ onBack }) => {
           <ButtonGroup>
             <ActionButton variant="secondary" onClick={handleBack}>
               <FaArrowLeft />
-              {currentView === VIEWS.LIST ? "Volver" : "Atrás"}
+              {currentView === VIEWS.LIST ? 'Volver' : 'Atrás'}
             </ActionButton>
 
             {currentView === VIEWS.LIST && (

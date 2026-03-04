@@ -1,19 +1,19 @@
-import React from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { useTheme } from "../contexts/ThemeContext";
-import MapaViewer from "./MapaViewer";
-import * as turf from "@turf/turf";
-import { FaMapMarkedAlt, FaCalculator, FaUser, FaExpand } from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useTheme } from '../contexts/ThemeContext';
+import MapaViewer from './MapaViewer';
+import * as turf from '@turf/turf';
+import { FaMapMarkedAlt, FaCalculator, FaUser, FaExpand } from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
 
 // Styled Components
 const PreviewContainer = styled.div`
   background: ${(props) => props.theme.colors.surface};
   border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 12px;
-  padding: ${(props) => (props.compact ? "1rem" : "1.5rem")};
-  margin: ${(props) => (props.compact ? "0.5rem 0" : "1rem 0")};
+  padding: ${(props) => (props.compact ? '1rem' : '1.5rem')};
+  margin: ${(props) => (props.compact ? '0.5rem 0' : '1rem 0')};
   box-shadow: ${(props) => props.theme.colors.shadow};
   transition: all 0.3s ease;
 
@@ -27,13 +27,13 @@ const PreviewHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${(props) => (props.compact ? "0.75rem" : "1rem")};
+  margin-bottom: ${(props) => (props.compact ? '0.75rem' : '1rem')};
 `;
 
 const LoteTitle = styled.h4`
   color: ${(props) => props.theme.colors.text};
   margin: 0;
-  font-size: ${(props) => (props.compact ? "1rem" : "1.2rem")};
+  font-size: ${(props) => (props.compact ? '1rem' : '1.2rem')};
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -65,7 +65,7 @@ const ExpandButton = styled.button`
 const ContentGrid = styled.div`
   display: grid;
   grid-template-columns: ${(props) =>
-    props.compact ? "1fr" : props.showMap ? "1fr 1fr" : "1fr"};
+    props.compact ? '1fr' : props.showMap ? '1fr 1fr' : '1fr'};
   gap: 1.5rem;
   align-items: start;
 
@@ -117,7 +117,7 @@ const StatItem = styled.div`
 `;
 
 const StatValue = styled.div`
-  font-size: ${(props) => (props.compact ? "1rem" : "1.2rem")};
+  font-size: ${(props) => (props.compact ? '1rem' : '1.2rem')};
   font-weight: bold;
   color: ${(props) => props.theme.colors.primary};
   margin-bottom: 0.2rem;
@@ -133,8 +133,8 @@ const StatLabel = styled.div`
 const MapSection = styled.div`
   border-radius: 8px;
   overflow: hidden;
-  height: ${(props) => props.height || "200px"};
-  min-height: ${(props) => props.height || "200px"};
+  height: ${(props) => props.height || '200px'};
+  min-height: ${(props) => props.height || '200px'};
   border: 1px solid ${(props) => props.theme.colors.border};
   position: relative;
   background: #f0f0f0;
@@ -164,7 +164,7 @@ const LotePreview = ({
   lote,
   compact = false,
   showMap = true,
-  mapHeight = "200px",
+  mapHeight = '200px',
   onExpand = null,
   showExpandButton = false,
 }) => {
@@ -181,7 +181,7 @@ const LotePreview = ({
     }
 
     const area = turf.area(lote.geometria) / 10000; // Convertir a hectáreas
-    const perimetro = turf.length(lote.geometria, { units: "kilometers" });
+    const perimetro = turf.length(lote.geometria, { units: 'kilometers' });
     const vertices = lote.geometria.geometry.coordinates[0].length - 1;
 
     return {
@@ -218,7 +218,7 @@ const LotePreview = ({
         {showExpandButton && onExpand && (
           <ExpandButton theme={theme} onClick={() => onExpand(lote)}>
             <FaExpand />
-            {!compact && "Ver completo"}
+            {!compact && 'Ver completo'}
           </ExpandButton>
         )}
       </PreviewHeader>
@@ -244,7 +244,7 @@ const LotePreview = ({
               <FaMapMarkedAlt />
             </InfoIcon>
             <InfoText theme={theme}>
-              {lote.geometria ? "✅ Geometría definida" : "❌ Sin geometría"}
+              {lote.geometria ? '✅ Geometría definida' : '❌ Sin geometría'}
             </InfoText>
           </InfoRow>
 

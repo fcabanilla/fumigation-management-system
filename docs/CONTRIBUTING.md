@@ -60,12 +60,12 @@ Estilos: kebab-case (user-profile.styles.js)
 
 ```javascript
 // 1. Imports externos
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 // 2. Imports internos
-import { validateEmail } from "../utils/validation";
-import { StyledContainer, StyledButton } from "./ComponentName.styles";
+import { validateEmail } from '../utils/validation';
+import { StyledContainer, StyledButton } from './ComponentName.styles';
 
 // 3. Componente principal
 const ComponentName = ({ prop1, prop2, onAction }) => {
@@ -127,33 +127,33 @@ git commit -m "refactor: optimize dashboard performance"
 
 ```javascript
 // ComponentName.test.js
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
-import ComponentName from "./ComponentName";
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import ComponentName from './ComponentName';
 
 // Helper para render con Router
 const renderWithRouter = (component) => {
   return render(<BrowserRouter>{component}</BrowserRouter>);
 };
 
-describe("ComponentName", () => {
+describe('ComponentName', () => {
   beforeEach(() => {
     // Setup común
   });
 
-  describe("Rendering", () => {
-    test("renders correctly with required props", () => {
+  describe('Rendering', () => {
+    test('renders correctly with required props', () => {
       renderWithRouter(<ComponentName requiredProp="value" />);
-      expect(screen.getByText("Expected Text")).toBeInTheDocument();
+      expect(screen.getByText('Expected Text')).toBeInTheDocument();
     });
   });
 
-  describe("User Interactions", () => {
-    test("handles click events correctly", async () => {
+  describe('User Interactions', () => {
+    test('handles click events correctly', async () => {
       const mockHandler = jest.fn();
       renderWithRouter(<ComponentName onAction={mockHandler} />);
 
-      fireEvent.click(screen.getByRole("button"));
+      fireEvent.click(screen.getByRole('button'));
 
       await waitFor(() => {
         expect(mockHandler).toHaveBeenCalledWith(expectedValue);
@@ -161,8 +161,8 @@ describe("ComponentName", () => {
     });
   });
 
-  describe("Edge Cases", () => {
-    test("handles empty props gracefully", () => {
+  describe('Edge Cases', () => {
+    test('handles empty props gracefully', () => {
       renderWithRouter(<ComponentName />);
       // assertions
     });
@@ -190,7 +190,7 @@ npm run test:coverage:report
 
 ```javascript
 // Archivo: ComponentName.styles.js
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components';
 
 // Base styles
 const BaseButton = styled.button`
@@ -398,7 +398,7 @@ const BadComponent = ({ data, onAction }) => {
       {data.map((item) => (
         <Item
           key={item.id}
-          style={{ color: "red" }} // ❌ New object every render
+          style={{ color: 'red' }} // ❌ New object every render
           onClick={() => onAction(item.id)} // ❌ New function every render
         />
       ))}

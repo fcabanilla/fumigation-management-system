@@ -15,21 +15,18 @@ Desarrollar un sistema integral de gestión de fumigaciones agrícolas que digit
 #### Objetivos Cumplidos
 
 - [x] **Sistema de autenticación robusto**
-
   - Login dual (username/email + password)
   - Persistencia de sesión configurable (localStorage/sessionStorage)
   - Validación en tiempo real
   - Gestión automática de expiración
 
 - [x] **Dashboard ejecutivo funcional**
-
   - Métricas clave visualizadas
   - Accesos rápidos a funcionalidades
   - Diseño responsive
   - Tema agrícola profesional
 
 - [x] **Gestión básica de perfil de usuario**
-
   - Visualización de información personal
   - Edición inline de datos básicos
   - Estadísticas de usuario personalizado

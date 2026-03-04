@@ -100,7 +100,7 @@ const checkExpiration = () => {
 
 ```javascript
 // Unified interface for both storage types
-const getStorageItem = key => {
+const getStorageItem = (key) => {
   return localStorage.getItem(key) || sessionStorage.getItem(key);
 };
 ```

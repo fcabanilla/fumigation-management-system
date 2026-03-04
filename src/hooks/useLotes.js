@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export const useLotes = () => {
   const [lotes, setLotes] = useState([]);
@@ -7,7 +7,7 @@ export const useLotes = () => {
   useEffect(() => {
     const cargarLotes = () => {
       try {
-        const lotesGuardados = localStorage.getItem("lotes");
+        const lotesGuardados = localStorage.getItem('lotes');
         if (lotesGuardados) {
           const lotesData = JSON.parse(lotesGuardados);
           setLotes(lotesData);
@@ -24,15 +24,15 @@ export const useLotes = () => {
 
     // Escuchar cambios en localStorage para actualizar en tiempo real
     const handleStorageChange = (e) => {
-      if (e.key === "lotes") {
+      if (e.key === 'lotes') {
         cargarLotes();
       }
     };
 
-    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
 
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 

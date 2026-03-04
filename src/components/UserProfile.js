@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import {
   FaUser,
   FaEnvelope,
@@ -10,8 +10,8 @@ import {
   FaTimes,
   FaUserCircle,
   FaCog,
-} from "react-icons/fa";
-import { GiSpray } from "react-icons/gi";
+} from 'react-icons/fa';
+import { GiSpray } from 'react-icons/gi';
 
 const ProfileContainer = styled.div`
   background: white;
@@ -40,7 +40,7 @@ const ProfileTitle = styled.h2`
 `;
 
 const EditButton = styled.button`
-  background: ${(props) => (props.isEditing ? "#dc3545" : "#4a7c59")};
+  background: ${(props) => (props.isEditing ? '#dc3545' : '#4a7c59')};
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -206,14 +206,14 @@ const UserProfile = ({ user, onUserUpdate }) => {
 
   // Datos por defecto si no hay usuario
   const defaultUser = {
-    username: "admin",
-    email: "admin@fumigacion.com",
-    displayName: "Administrador",
-    role: "Administrador",
+    username: 'admin',
+    email: 'admin@fumigacion.com',
+    displayName: 'Administrador',
+    role: 'Administrador',
     lastLogin: new Date().toISOString(),
-    joinDate: "2024-01-15",
+    joinDate: '2024-01-15',
     preferences: {
-      theme: "light",
+      theme: 'light',
       notifications: true,
     },
   };
@@ -255,29 +255,29 @@ const UserProfile = ({ user, onUserUpdate }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return date.toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   const userStats = [
-    { label: "Días Activo", value: "142" },
-    { label: "Fumigaciones", value: "89" },
-    { label: "Hectáreas", value: "456" },
-    { label: "Reportes", value: "23" },
+    { label: 'Días Activo', value: '142' },
+    { label: 'Fumigaciones', value: '89' },
+    { label: 'Hectáreas', value: '456' },
+    { label: 'Reportes', value: '23' },
   ];
 
   const displayUser = isEditing ? editedUser : currentUser;
@@ -289,7 +289,7 @@ const UserProfile = ({ user, onUserUpdate }) => {
           <FaUserCircle />
           Perfil de Usuario
         </ProfileTitle>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
           {isEditing && (
             <EditButton onClick={handleCancel} isEditing={true}>
               <FaTimes />
@@ -298,7 +298,7 @@ const UserProfile = ({ user, onUserUpdate }) => {
           )}
           <EditButton onClick={handleEdit} isEditing={false}>
             {isEditing ? <FaSave /> : <FaEdit />}
-            {isEditing ? "Guardar" : "Editar"}
+            {isEditing ? 'Guardar' : 'Editar'}
           </EditButton>
         </div>
       </ProfileHeader>
@@ -308,7 +308,7 @@ const UserProfile = ({ user, onUserUpdate }) => {
           <Avatar>
             <FaUser />
           </Avatar>
-          <UserRole>{displayUser.role || "Usuario"}</UserRole>
+          <UserRole>{displayUser.role || 'Usuario'}</UserRole>
         </AvatarSection>
 
         <InfoSection>
@@ -322,9 +322,9 @@ const UserProfile = ({ user, onUserUpdate }) => {
                 {isEditing ? (
                   <FieldInput
                     type="text"
-                    value={displayUser.username || ""}
+                    value={displayUser.username || ''}
                     onChange={(e) =>
-                      handleInputChange("username", e.target.value)
+                      handleInputChange('username', e.target.value)
                     }
                   />
                 ) : (
@@ -342,9 +342,9 @@ const UserProfile = ({ user, onUserUpdate }) => {
                 {isEditing ? (
                   <FieldInput
                     type="text"
-                    value={displayUser.displayName || ""}
+                    value={displayUser.displayName || ''}
                     onChange={(e) =>
-                      handleInputChange("displayName", e.target.value)
+                      handleInputChange('displayName', e.target.value)
                     }
                   />
                 ) : (
@@ -364,8 +364,8 @@ const UserProfile = ({ user, onUserUpdate }) => {
                 {isEditing ? (
                   <FieldInput
                     type="email"
-                    value={displayUser.email || ""}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    value={displayUser.email || ''}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
                   />
                 ) : (
                   <FieldValue>{displayUser.email}</FieldValue>
@@ -392,15 +392,15 @@ const UserProfile = ({ user, onUserUpdate }) => {
               <FieldContent>
                 <FieldLabel>Miembro Desde</FieldLabel>
                 <FieldValue>
-                  {formatDate(displayUser.joinDate || "2024-01-15")}
+                  {formatDate(displayUser.joinDate || '2024-01-15')}
                 </FieldValue>
               </FieldContent>
             </InfoField>
           </InfoGroup>
 
           <InfoGroup>
-            <FieldLabel style={{ marginBottom: "0.5rem", marginLeft: "0" }}>
-              <FaCog style={{ marginRight: "0.5rem" }} />
+            <FieldLabel style={{ marginBottom: '0.5rem', marginLeft: '0' }}>
+              <FaCog style={{ marginRight: '0.5rem' }} />
               Estadísticas de Actividad
             </FieldLabel>
             <StatsGrid>

@@ -1,19 +1,58 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { FaChartBar, FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
-import { GiSpray, GiPlantSeed, GiWheat } from "react-icons/gi";
-import { useTheme } from "../contexts/ThemeContext";
-import UserProfile from "./UserProfile";
-import FumigacionManager from "./FumigacionManager";
-import LoteManager from "./LoteManager";
-import Navbar from "./Navbar";
-import ReportesAnalytics from "./ReportesAnalytics";
-import MapaFumigacionesGeoespacial from "./MapaFumigacionesGeoespacial";
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import {
+  FaCog,
+  FaChartBar,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaSignOutAlt,
+} from 'react-icons/fa';
+import { GiSpray, GiPlantSeed } from 'react-icons/gi';
 
 const DashboardContainer = styled.div`
   min-height: 100vh;
-  background: ${(props) => props.theme.colors.backgroundGradient};
+  background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%);
+`;
+
+const Header = styled.header`
+  background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const HeaderContent = styled.div`
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const Logo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: 600;
+`;
+
+const LogoutButton = styled.button`
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
 `;
 
 const Main = styled.main`
@@ -23,21 +62,21 @@ const Main = styled.main`
 `;
 
 const WelcomeSection = styled.section`
-  background: ${(props) => props.theme.colors.surface};
+  background: white;
   padding: 2rem;
   border-radius: 15px;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 20px ${(props) => props.theme.colors.shadow};
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 `;
 
 const WelcomeTitle = styled.h1`
-  color: ${(props) => props.theme.colors.primary};
+  color: #2d5016;
   margin: 0 0 0.5rem 0;
   font-size: 2rem;
 `;
 
 const WelcomeSubtitle = styled.p`
-  color: ${(props) => props.theme.colors.textSecondary};
+  color: #666;
   margin: 0;
   font-size: 1.1rem;
 `;
@@ -50,10 +89,10 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled.div`
-  background: ${(props) => props.theme.colors.surface};
+  background: white;
   padding: 1.5rem;
   border-radius: 15px;
-  box-shadow: 0 4px 20px ${(props) => props.theme.colors.shadow};
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -66,8 +105,8 @@ const StatCard = styled.div`
 
 const StatIcon = styled.div`
   font-size: 2.5rem;
-  color: ${(props) => props.color || "#4a7c59"};
-  background: ${(props) => props.bgColor || "rgba(74, 124, 89, 0.1)"};
+  color: ${(props) => props.color || '#4a7c59'};
+  background: ${(props) => props.bgColor || 'rgba(74, 124, 89, 0.1)'};
   padding: 1rem;
   border-radius: 12px;
 `;
@@ -79,12 +118,12 @@ const StatInfo = styled.div`
 const StatValue = styled.div`
   font-size: 2rem;
   font-weight: 700;
-  color: ${(props) => props.theme.colors.primary};
+  color: #2d5016;
   margin-bottom: 0.5rem;
 `;
 
 const StatLabel = styled.div`
-  color: ${(props) => props.theme.colors.textSecondary};
+  color: #666;
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -97,10 +136,10 @@ const ActionsGrid = styled.div`
 `;
 
 const ActionCard = styled.div`
-  background: ${(props) => props.theme.colors.surface};
+  background: white;
   padding: 1.5rem;
   border-radius: 15px;
-  box-shadow: ${(props) => props.theme.colors.shadow};
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
 
   &:hover {
@@ -121,13 +160,13 @@ const ActionIcon = styled.div`
 `;
 
 const ActionTitle = styled.h3`
-  color: ${(props) => props.theme.colors.text};
+  color: #2d5016;
   margin: 0;
   font-size: 1.2rem;
 `;
 
 const ActionDescription = styled.p`
-  color: ${(props) => props.theme.colors.textSecondary};
+  color: #666;
   margin: 0 0 1rem 0;
   line-height: 1.5;
 `;
@@ -149,209 +188,126 @@ const ActionButton = styled.button`
 `;
 
 const Dashboard = ({ user, onLogout }) => {
-  const [showUserProfile, setShowUserProfile] = useState(false);
-  const [currentUser, setCurrentUser] = useState(user);
-  const [currentView, setCurrentView] = useState("dashboard"); // 'dashboard' | 'fumigaciones' | 'lotes' | 'profile' | 'reportes' | 'mapas'
-
-  const { theme } = useTheme();
-
-  const handleUserUpdate = (updatedUser) => {
-    setCurrentUser(updatedUser);
-
-    // Actualizar también en localStorage/sessionStorage
-    const rememberMe = localStorage.getItem("rememberMe") === "true";
-    if (rememberMe) {
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-    } else {
-      sessionStorage.setItem("user", JSON.stringify(updatedUser));
-    }
-  };
-
-  const handleNavigation = (view) => {
-    setCurrentView(view);
-    if (view === "profile") {
-      setShowUserProfile(true);
-    } else {
-      setShowUserProfile(false);
-    }
-  };
-
-  const handleBackToDashboard = () => {
-    setCurrentView("dashboard");
-    setShowUserProfile(false);
-  };
-
-  const getBreadcrumbs = () => {
-    switch (currentView) {
-      case "fumigaciones":
-        return ["Dashboard", "Gestión de Fumigaciones"];
-      case "lotes":
-        return ["Dashboard", "Gestión de Lotes"];
-      case "reportes":
-        return ["Dashboard", "Reportes y Análisis"];
-      case "mapas":
-        return ["Dashboard", "Mapa de Campos"];
-      case "profile":
-        return ["Dashboard", "Mi Perfil"];
-      default:
-        return ["Dashboard"];
-    }
-  };
-
   const handleFeatureClick = (featureName) => {
-    if (featureName === "Gestión de Fumigaciones") {
-      handleNavigation("fumigaciones");
-    } else if (featureName === "Gestión de Lotes") {
-      handleNavigation("lotes");
-    } else if (featureName === "Reportes y Análisis") {
-      handleNavigation("reportes");
-    } else if (featureName === "Ver Mapa de Campos") {
-      handleNavigation("mapas");
-    } else {
-      // En una aplicación real, aquí navegaríamos a la página correspondiente
-      // eslint-disable-next-line no-alert
-      alert(`Función en desarrollo: ${featureName}`);
-    }
+    // En una aplicación real, aquí navegaríamos a la página correspondiente
+    // eslint-disable-next-line no-alert
+    alert(`Función en desarrollo: ${featureName}`);
   };
 
   const stats = [
     {
       icon: GiSpray,
-      value: "24",
-      label: "Fumigaciones Programadas",
-      color: "#4a7c59",
-      bgColor: "rgba(74, 124, 89, 0.1)",
+      value: '24',
+      label: 'Fumigaciones Programadas',
+      color: '#4a7c59',
+      bgColor: 'rgba(74, 124, 89, 0.1)',
     },
     {
       icon: GiPlantSeed,
-      value: "156",
-      label: "Hectáreas Tratadas",
-      color: "#6b8e23",
-      bgColor: "rgba(107, 142, 35, 0.1)",
+      value: '156',
+      label: 'Hectáreas Tratadas',
+      color: '#6b8e23',
+      bgColor: 'rgba(107, 142, 35, 0.1)',
     },
     {
       icon: FaChartBar,
-      value: "89%",
-      label: "Efectividad Promedio",
-      color: "#2e7d32",
-      bgColor: "rgba(46, 125, 50, 0.1)",
+      value: '89%',
+      label: 'Efectividad Promedio',
+      color: '#2e7d32',
+      bgColor: 'rgba(46, 125, 50, 0.1)',
     },
     {
       icon: FaCalendarAlt,
-      value: "12",
-      label: "Tareas Pendientes",
-      color: "#f57c00",
-      bgColor: "rgba(245, 124, 0, 0.1)",
+      value: '12',
+      label: 'Tareas Pendientes',
+      color: '#f57c00',
+      bgColor: 'rgba(245, 124, 0, 0.1)',
     },
   ];
 
   const actions = [
     {
-      icon: GiSpray,
-      title: "Gestión de Fumigaciones",
-      description:
-        "Crea, edita y gestiona todas tus fumigaciones. Controla el estado y progreso de cada tratamiento.",
-      action: () => handleFeatureClick("Gestión de Fumigaciones"),
-    },
-    {
-      icon: GiWheat,
-      title: "Gestión de Lotes",
-      description:
-        "Administra tus lotes de cultivo, dibuja polígonos y gestiona información geoespacial de tus campos.",
-      action: () => handleFeatureClick("Gestión de Lotes"),
-    },
-    {
       icon: FaCalendarAlt,
-      title: "Programar Fumigación",
+      title: 'Programar Fumigación',
       description:
-        "Planifica nuevas tareas de fumigación para tus cultivos y establece fechas de aplicación.",
-      action: () => handleFeatureClick("Programar Fumigación"),
+        'Planifica nuevas tareas de fumigación para tus cultivos y establece fechas de aplicación.',
+      action: () => handleFeatureClick('Programar Fumigación'),
     },
     {
       icon: FaMapMarkerAlt,
-      title: "Ver Mapa de Campos",
+      title: 'Ver Mapa de Campos',
       description:
-        "Visualiza todos tus campos y el estado actual de las fumigaciones en curso.",
-      action: () => handleFeatureClick("Ver Mapa de Campos"),
+        'Visualiza todos tus campos y el estado actual de las fumigaciones en curso.',
+      action: () => handleFeatureClick('Ver Mapa de Campos'),
     },
     {
       icon: FaChartBar,
-      title: "Reportes y Análisis",
+      title: 'Reportes y Análisis',
       description:
-        "Genera reportes detallados sobre la efectividad y costos de tus fumigaciones.",
-      action: () => handleFeatureClick("Reportes y Análisis"),
+        'Genera reportes detallados sobre la efectividad y costos de tus fumigaciones.',
+      action: () => handleFeatureClick('Reportes y Análisis'),
+    },
+    {
+      icon: FaCog,
+      title: 'Configuración',
+      description:
+        'Ajusta las configuraciones del sistema, usuarios y parámetros de fumigación.',
+      action: () => handleFeatureClick('Configuración'),
     },
   ];
 
   return (
-    <DashboardContainer theme={theme}>
-      <Navbar
-        currentView={currentView}
-        onNavigate={handleNavigation}
-        onLogout={onLogout}
-        showBack={currentView !== "dashboard"}
-        onBack={handleBackToDashboard}
-        breadcrumbs={getBreadcrumbs()}
-        user={currentUser}
-      />
+    <DashboardContainer>
+      <Header>
+        <HeaderContent>
+          <Logo>
+            <GiSpray />
+            AgriControl Pro
+          </Logo>
+          <LogoutButton onClick={onLogout}>
+            <FaSignOutAlt />
+            Cerrar Sesión
+          </LogoutButton>
+        </HeaderContent>
+      </Header>
 
-      {currentView === "fumigaciones" ? (
-        <FumigacionManager
-          onBack={handleBackToDashboard}
-          onLogout={onLogout}
-          user={currentUser}
-        />
-      ) : currentView === "lotes" ? (
-        <LoteManager onBack={handleBackToDashboard} />
-      ) : currentView === "reportes" ? (
-        <ReportesAnalytics onBack={handleBackToDashboard} />
-      ) : currentView === "mapas" ? (
-        <MapaFumigacionesGeoespacial onBack={handleBackToDashboard} />
-      ) : (
-        <Main>
-          <WelcomeSection theme={theme}>
-            <WelcomeTitle theme={theme}>¡Bienvenido de vuelta!</WelcomeTitle>
-            <WelcomeSubtitle theme={theme}>
-              Aquí tienes un resumen de tu sistema de gestión de fumigación.
-            </WelcomeSubtitle>
-          </WelcomeSection>
+      <Main>
+        <WelcomeSection>
+          <WelcomeTitle>¡Bienvenido de vuelta!</WelcomeTitle>
+          <WelcomeSubtitle>
+            Aquí tienes un resumen de tu sistema de gestión de fumigación.
+          </WelcomeSubtitle>
+        </WelcomeSection>
 
-          {(showUserProfile || currentView === "profile") && (
-            <UserProfile user={currentUser} onUserUpdate={handleUserUpdate} />
-          )}
+        <StatsGrid>
+          {stats.map((stat, index) => (
+            <StatCard key={index}>
+              <StatIcon color={stat.color} bgColor={stat.bgColor}>
+                <stat.icon />
+              </StatIcon>
+              <StatInfo>
+                <StatValue>{stat.value}</StatValue>
+                <StatLabel>{stat.label}</StatLabel>
+              </StatInfo>
+            </StatCard>
+          ))}
+        </StatsGrid>
 
-          <StatsGrid>
-            {stats.map((stat, index) => (
-              <StatCard key={index} theme={theme}>
-                <StatIcon color={stat.color} bgColor={stat.bgColor}>
-                  <stat.icon />
-                </StatIcon>
-                <StatInfo>
-                  <StatValue theme={theme}>{stat.value}</StatValue>
-                  <StatLabel theme={theme}>{stat.label}</StatLabel>
-                </StatInfo>
-              </StatCard>
-            ))}
-          </StatsGrid>
-
-          <ActionsGrid>
-            {actions.map((action, index) => (
-              <ActionCard key={index} theme={theme}>
-                <ActionHeader>
-                  <ActionIcon>
-                    <action.icon />
-                  </ActionIcon>
-                  <ActionTitle theme={theme}>{action.title}</ActionTitle>
-                </ActionHeader>
-                <ActionDescription theme={theme}>
-                  {action.description}
-                </ActionDescription>
-                <ActionButton onClick={action.action}>Acceder</ActionButton>
-              </ActionCard>
-            ))}
-          </ActionsGrid>
-        </Main>
-      )}
+        <ActionsGrid>
+          {actions.map((action, index) => (
+            <ActionCard key={index}>
+              <ActionHeader>
+                <ActionIcon>
+                  <action.icon />
+                </ActionIcon>
+                <ActionTitle>{action.title}</ActionTitle>
+              </ActionHeader>
+              <ActionDescription>{action.description}</ActionDescription>
+              <ActionButton onClick={action.action}>Acceder</ActionButton>
+            </ActionCard>
+          ))}
+        </ActionsGrid>
+      </Main>
     </DashboardContainer>
   );
 };

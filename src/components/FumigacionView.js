@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { useLotes } from "../hooks/useLotes";
-import LotePreview from "./LotePreview";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useLotes } from '../hooks/useLotes';
+import LotePreview from './LotePreview';
 import {
   FaTimes,
   FaEdit,
@@ -13,8 +13,8 @@ import {
   FaTools,
   FaClock,
   FaEye,
-} from "react-icons/fa";
-import { GiSpray } from "react-icons/gi";
+} from 'react-icons/fa';
+import { GiSpray } from 'react-icons/gi';
 
 // Styled Components
 const ModalOverlay = styled.div`
@@ -132,8 +132,8 @@ const StatusBadge = styled.div`
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: ${(props) => props.background || "#e0e0e0"};
-  color: ${(props) => props.color || "#666"};
+  background: ${(props) => props.background || '#e0e0e0'};
+  color: ${(props) => props.color || '#666'};
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 `;
 
@@ -291,24 +291,24 @@ const SecondaryButton = styled(Button)`
 // Estados de fumigación
 const ESTADOS_FUMIGACION = {
   PLANIFICADA: {
-    label: "Planificada",
-    color: "#fff",
-    background: "#2196f3",
+    label: 'Planificada',
+    color: '#fff',
+    background: '#2196f3',
   },
   EN_PROCESO: {
-    label: "En Proceso",
-    color: "#fff",
-    background: "#ff9800",
+    label: 'En Proceso',
+    color: '#fff',
+    background: '#ff9800',
   },
   COMPLETADA: {
-    label: "Completada",
-    color: "#fff",
-    background: "#4caf50",
+    label: 'Completada',
+    color: '#fff',
+    background: '#4caf50',
   },
   CANCELADA: {
-    label: "Cancelada",
-    color: "#fff",
-    background: "#f44336",
+    label: 'Cancelada',
+    color: '#fff',
+    background: '#f44336',
   },
 };
 
@@ -346,37 +346,37 @@ const FumigacionView = ({ fumigacion, onEdit, onClose }) => {
 
   const formatDate = (dateString) => {
     if (!dateString) {
-      return "No definida";
+      return 'No definida';
     }
     const date = new Date(dateString);
-    return date.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
     });
   };
 
   const formatDateTime = (dateString) => {
     if (!dateString) {
-      return "No definida";
+      return 'No definida';
     }
     const date = new Date(dateString);
-    return date.toLocaleString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   const formatCurrency = (amount) => {
     if (!amount) {
-      return "No especificado";
+      return 'No especificado';
     }
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
     }).format(amount);
   };
 
@@ -389,10 +389,10 @@ const FumigacionView = ({ fumigacion, onEdit, onClose }) => {
         onClick={(e) => e.stopPropagation()}
         style={{
           transform: isClosing
-            ? "translateY(20px) scale(0.95)"
-            : "translateY(0) scale(1)",
+            ? 'translateY(20px) scale(0.95)'
+            : 'translateY(0) scale(1)',
           opacity: isClosing ? 0 : 1,
-          transition: "all 0.2s ease-out",
+          transition: 'all 0.2s ease-out',
         }}
       >
         <ModalHeader>
@@ -562,7 +562,7 @@ const FumigacionView = ({ fumigacion, onEdit, onClose }) => {
                     <InfoValue>
                       {fumigacion.fechaRealizada
                         ? formatDate(fumigacion.fechaRealizada)
-                        : "Pendiente de realizar"}
+                        : 'Pendiente de realizar'}
                     </InfoValue>
                   </InfoContent>
                 </InfoItem>

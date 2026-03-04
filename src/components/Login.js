@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { FaUser, FaLock, FaLeaf, FaEye, FaEyeSlash } from "react-icons/fa";
-import { GiSpray } from "react-icons/gi";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { FaUser, FaLock, FaLeaf, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { GiSpray } from 'react-icons/gi';
 
 const LoginContainer = styled.div`
   min-height: 100vh;
@@ -14,7 +14,7 @@ const LoginContainer = styled.div`
   position: relative;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -147,13 +147,9 @@ const LoginButton = styled.button`
   letter-spacing: 1px;
   position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: -100%;
@@ -168,7 +164,7 @@ const LoginButton = styled.button`
     transition: left 0.5s;
   }
 
-  &:hover:not(:disabled) {
+  &:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(74, 124, 89, 0.4);
 
@@ -177,32 +173,14 @@ const LoginButton = styled.button`
     }
   }
 
-  &:active:not(:disabled) {
+  &:active {
     transform: translateY(0);
   }
 
   &:disabled {
-    opacity: 0.8;
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-  }
-`;
-
-const LoadingSpinner = styled.div`
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
   }
 `;
 
@@ -213,7 +191,7 @@ const RememberMe = styled.div`
   font-size: 0.9rem;
   color: #666;
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     accent-color: #4a7c59;
   }
 `;
@@ -268,13 +246,13 @@ const FooterText = styled.p`
 
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -284,68 +262,34 @@ const Login = ({ onLogin }) => {
     });
     // Limpiar mensajes al empezar a escribir
     if (error) {
-      setError("");
+      setError('');
     }
     if (success) {
-      setSuccess("");
+      setSuccess('');
     }
-  };
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validateUsername = (username) => {
-    // Al menos 3 caracteres, solo letras, números y algunos caracteres especiales permitidos
-    const usernameRegex = /^[a-zA-Z0-9._-]{3,20}$/;
-    return usernameRegex.test(username);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
 
     // Validaciones básicas
     if (!formData.username.trim()) {
-      setError("Por favor ingresa tu usuario");
-      setIsLoading(false);
-      return;
-    }
-
-    // Validar formato de usuario (podría ser email o username)
-    const isEmail = formData.username.includes("@");
-    if (isEmail && !validateEmail(formData.username)) {
-      setError("Por favor ingresa un email válido");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!isEmail && !validateUsername(formData.username)) {
-      setError(
-        "El usuario debe tener entre 3-20 caracteres y solo puede contener letras, números, puntos, guiones y guiones bajos"
-      );
+      setError('Por favor ingresa tu usuario');
       setIsLoading(false);
       return;
     }
 
     if (!formData.password.trim()) {
-      setError("Por favor ingresa tu contraseña");
+      setError('Por favor ingresa tu contraseña');
       setIsLoading(false);
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
-      setIsLoading(false);
-      return;
-    }
-
-    // Validar que la contraseña tenga al menos una letra y un número
-    if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(formData.password)) {
-      setError("La contraseña debe contener al menos una letra y un número");
+      setError('La contraseña debe tener al menos 6 caracteres');
       setIsLoading(false);
       return;
     }
@@ -354,26 +298,20 @@ const Login = ({ onLogin }) => {
       // Simulación de login (aquí iría tu lógica de autenticación)
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Login demo exitoso - aceptar tanto admin como admin@fumigacion.com
-      const validCredentials =
-        (formData.username === "admin" ||
-          formData.username === "admin@fumigacion.com") &&
-        formData.password === "fumigacion123";
-
-      if (validCredentials) {
-        setSuccess("¡Inicio de sesión exitoso! Redirigiendo...");
+      // Login demo exitoso
+      if (
+        formData.username === 'admin' &&
+        formData.password === 'fumigacion123'
+      ) {
+        setSuccess('¡Inicio de sesión exitoso! Redirigiendo...');
         setTimeout(() => {
-          onLogin && onLogin({ ...formData, rememberMe });
+          onLogin && onLogin(formData);
         }, 1000);
       } else {
-        setError(
-          "Usuario o contraseña incorrectos. Intenta con: admin / fumigacion123"
-        );
+        setError('Usuario o contraseña incorrectos');
       }
     } catch (err) {
-      setError(
-        "Error de conexión. Por favor verifica tu conexión a internet e inténtalo nuevamente."
-      );
+      setError('Error de conexión. Inténtalo nuevamente.');
     } finally {
       setIsLoading(false);
     }
@@ -390,7 +328,7 @@ const Login = ({ onLogin }) => {
           <Logo>
             <LogoIcon />
           </Logo>
-          <Title>Fumig App</Title>
+          <Title>AgriControl</Title>
           <Subtitle>Sistema de Gestión de Fumigación</Subtitle>
         </Header>
 
@@ -418,7 +356,7 @@ const Login = ({ onLogin }) => {
             </InputIcon>
             <PasswordInput>
               <Input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 placeholder="Contraseña"
                 value={formData.password}
@@ -447,8 +385,7 @@ const Login = ({ onLogin }) => {
           </RememberMe>
 
           <LoginButton type="submit" disabled={isLoading}>
-            {isLoading && <LoadingSpinner />}
-            {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+            {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </LoginButton>
 
           <ForgotPassword href="#forgot">
@@ -458,7 +395,7 @@ const Login = ({ onLogin }) => {
 
         <Footer>
           <FooterText>
-            <FaLeaf /> Fumig App v1.0 - Sistema Profesional de Fumigación
+            <FaLeaf /> AgriControl Pro v1.0 - Sistema Profesional de Fumigación
           </FooterText>
         </Footer>
       </LoginCard>

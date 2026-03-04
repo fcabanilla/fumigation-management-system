@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import {
   FaBars,
   FaTimes,
@@ -10,9 +10,9 @@ import {
   FaArrowLeft,
   FaChartBar,
   FaMapMarkerAlt,
-} from "react-icons/fa";
-import { GiSpray, GiWheat } from "react-icons/gi";
-import ThemeToggle from "./ThemeToggle";
+} from 'react-icons/fa';
+import { GiSpray, GiWheat } from 'react-icons/gi';
+import ThemeToggle from './ThemeToggle';
 
 // Styled Components
 const NavbarContainer = styled.nav`
@@ -99,7 +99,7 @@ const Breadcrumb = styled.div`
 
 const BreadcrumbItem = styled.span`
   &:not(:last-child)::after {
-    content: ">";
+    content: '>';
     margin-left: 0.5rem;
     opacity: 0.6;
   }
@@ -195,7 +195,7 @@ const MobileMenuOverlay = styled.div`
   background: rgba(0, 0, 0, 0.6);
   z-index: 200;
   opacity: ${(props) => (props.isOpen ? 1 : 0)};
-  visibility: ${(props) => (props.isOpen ? "visible" : "hidden")};
+  visibility: ${(props) => (props.isOpen ? 'visible' : 'hidden')};
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
 `;
@@ -208,7 +208,7 @@ const MobileMenu = styled.div`
   width: 280px;
   background: linear-gradient(135deg, #2d5016 0%, #4a7c59 100%);
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
-  transform: translateX(${(props) => (props.isOpen ? "0" : "100%")});
+  transform: translateX(${(props) => (props.isOpen ? '0' : '100%')});
   transition: transform 0.3s ease;
   z-index: 201;
   display: flex;
@@ -299,33 +299,33 @@ const MobileMenuIcon = styled.div`
 
 const MENU_ITEMS = [
   {
-    key: "dashboard",
-    label: "Dashboard",
+    key: 'dashboard',
+    label: 'Dashboard',
     icon: FaHome,
   },
   {
-    key: "fumigaciones",
-    label: "Fumigaciones",
+    key: 'fumigaciones',
+    label: 'Fumigaciones',
     icon: GiSpray,
   },
   {
-    key: "lotes",
-    label: "Lotes",
+    key: 'lotes',
+    label: 'Lotes',
     icon: GiWheat,
   },
   {
-    key: "mapas",
-    label: "Mapas",
+    key: 'mapas',
+    label: 'Mapas',
     icon: FaMapMarkerAlt,
   },
   {
-    key: "reportes",
-    label: "Reportes",
+    key: 'reportes',
+    label: 'Reportes',
     icon: FaChartBar,
   },
   {
-    key: "profile",
-    label: "Mi Perfil",
+    key: 'profile',
+    label: 'Mi Perfil',
     icon: FaUser,
   },
 ];
@@ -363,7 +363,7 @@ const Navbar = ({
   };
 
   const handleLogoClick = () => {
-    handleNavigation("dashboard");
+    handleNavigation('dashboard');
   };
 
   return (
@@ -399,7 +399,7 @@ const Navbar = ({
                 <NavButton
                   key={item.key}
                   onClick={() => handleNavigation(item.key)}
-                  className={currentView === item.key ? "active" : ""}
+                  className={currentView === item.key ? 'active' : ''}
                 >
                   <item.icon />
                   {item.label}
@@ -433,7 +433,7 @@ const Navbar = ({
             <MobileMenuItem
               key={item.key}
               onClick={() => handleNavigation(item.key)}
-              className={currentView === item.key ? "active" : ""}
+              className={currentView === item.key ? 'active' : ''}
             >
               <MobileMenuIcon>
                 <item.icon />

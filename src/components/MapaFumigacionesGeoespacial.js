@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import {
   MapContainer,
   TileLayer,
@@ -9,10 +9,10 @@ import {
   LayerGroup,
   Polygon,
   Tooltip,
-} from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import * as turf from "@turf/turf";
+} from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import * as turf from '@turf/turf';
 import {
   FaMapMarkerAlt,
   FaEye,
@@ -21,18 +21,18 @@ import {
   FaClock,
   FaCalculator,
   FaEdit,
-} from "react-icons/fa";
-import { GiSpray } from "react-icons/gi";
+} from 'react-icons/fa';
+import { GiSpray } from 'react-icons/gi';
 
 // Fix para iconos de Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
 // Styled Components
@@ -82,8 +82,8 @@ const ControlsContainer = styled.div`
 `;
 
 const FilterButton = styled.button`
-  background: ${(props) => (props.active ? "var(--primary-color)" : "white")};
-  color: ${(props) => (props.active ? "white" : "var(--primary-color)")};
+  background: ${(props) => (props.active ? 'var(--primary-color)' : 'white')};
+  color: ${(props) => (props.active ? 'white' : 'var(--primary-color)')};
   border: 2px solid var(--primary-color);
   padding: 0.5rem 1rem;
   border-radius: 25px;
@@ -224,31 +224,31 @@ const EstadisticaLabel = styled.div`
 
 // Colores por estado
 const ESTADO_COLORES = {
-  completada: "#28a745",
-  pendiente: "#ffc107",
-  "en-proceso": "#17a2b8",
-  cancelada: "#dc3545",
+  completada: '#28a745',
+  pendiente: '#ffc107',
+  'en-proceso': '#17a2b8',
+  cancelada: '#dc3545',
 };
 
 // Datos de ejemplo con geometrías GeoJSON reales
 const FUMIGACIONES_GEOJSON = [
   {
     id: 1,
-    titulo: "Campo Norte - Herbicida",
-    estado: "completada",
-    tipo: "Herbicida",
-    fecha: "2024-01-15",
-    cultivo: "Soja",
+    titulo: 'Campo Norte - Herbicida',
+    estado: 'completada',
+    tipo: 'Herbicida',
+    fecha: '2024-01-15',
+    cultivo: 'Soja',
     costo: 15000,
     efectividad: 92,
     geometria: {
-      type: "Feature",
+      type: 'Feature',
       properties: {
-        nombre: "Campo Norte",
-        cultivo: "Soja",
+        nombre: 'Campo Norte',
+        cultivo: 'Soja',
       },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-58.3816, -34.6037],
@@ -263,21 +263,21 @@ const FUMIGACIONES_GEOJSON = [
   },
   {
     id: 2,
-    titulo: "Lote Sur - Insecticida",
-    estado: "pendiente",
-    tipo: "Insecticida",
-    fecha: "2024-01-20",
-    cultivo: "Maíz",
+    titulo: 'Lote Sur - Insecticida',
+    estado: 'pendiente',
+    tipo: 'Insecticida',
+    fecha: '2024-01-20',
+    cultivo: 'Maíz',
     costo: 12000,
     efectividad: null,
     geometria: {
-      type: "Feature",
+      type: 'Feature',
       properties: {
-        nombre: "Lote Sur",
-        cultivo: "Maíz",
+        nombre: 'Lote Sur',
+        cultivo: 'Maíz',
       },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-58.396, -34.6118],
@@ -292,21 +292,21 @@ const FUMIGACIONES_GEOJSON = [
   },
   {
     id: 3,
-    titulo: "Parcela Este - Fungicida",
-    estado: "en-proceso",
-    tipo: "Fungicida",
-    fecha: "2024-01-18",
-    cultivo: "Trigo",
+    titulo: 'Parcela Este - Fungicida',
+    estado: 'en-proceso',
+    tipo: 'Fungicida',
+    fecha: '2024-01-18',
+    cultivo: 'Trigo',
     costo: 22000,
     efectividad: null,
     geometria: {
-      type: "Feature",
+      type: 'Feature',
       properties: {
-        nombre: "Parcela Este",
-        cultivo: "Trigo",
+        nombre: 'Parcela Este',
+        cultivo: 'Trigo',
       },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-58.3734, -34.5958],
@@ -321,21 +321,21 @@ const FUMIGACIONES_GEOJSON = [
   },
   {
     id: 4,
-    titulo: "Campo Oeste - Herbicida",
-    estado: "completada",
-    tipo: "Herbicida",
-    fecha: "2024-01-12",
-    cultivo: "Soja",
+    titulo: 'Campo Oeste - Herbicida',
+    estado: 'completada',
+    tipo: 'Herbicida',
+    fecha: '2024-01-12',
+    cultivo: 'Soja',
     costo: 18500,
     efectividad: 88,
     geometria: {
-      type: "Feature",
+      type: 'Feature',
       properties: {
-        nombre: "Campo Oeste",
-        cultivo: "Soja",
+        nombre: 'Campo Oeste',
+        cultivo: 'Soja',
       },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-58.389, -34.6158],
@@ -350,21 +350,21 @@ const FUMIGACIONES_GEOJSON = [
   },
   {
     id: 5,
-    titulo: "Lote Central Irregular",
-    estado: "cancelada",
-    tipo: "Insecticida",
-    fecha: "2024-01-22",
-    cultivo: "Girasol",
+    titulo: 'Lote Central Irregular',
+    estado: 'cancelada',
+    tipo: 'Insecticida',
+    fecha: '2024-01-22',
+    cultivo: 'Girasol',
     costo: 9500,
     efectividad: null,
     geometria: {
-      type: "Feature",
+      type: 'Feature',
       properties: {
-        nombre: "Lote Central",
-        cultivo: "Girasol",
+        nombre: 'Lote Central',
+        cultivo: 'Girasol',
       },
       geometry: {
-        type: "Polygon",
+        type: 'Polygon',
         coordinates: [
           [
             [-58.375, -34.608],
@@ -381,13 +381,13 @@ const FUMIGACIONES_GEOJSON = [
 ];
 
 const MapaFumigacionesGeoespacial = ({ onBack }) => {
-  const [filtroEstado, setFiltroEstado] = useState("todos");
+  const [filtroEstado, setFiltroEstado] = useState('todos');
   const [fumigaciones, setFumigaciones] = useState([]);
 
   // Función para cargar y procesar datos
   const cargarDatos = useCallback(() => {
     const datosReales = JSON.parse(
-      localStorage.getItem("fumigaciones") || "[]"
+      localStorage.getItem('fumigaciones') || '[]'
     );
 
     if (datosReales.length > 0) {
@@ -433,7 +433,7 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
 
       setFumigaciones(datosConGeometria);
       // Guardar los datos actualizados
-      localStorage.setItem("fumigaciones", JSON.stringify(datosConGeometria));
+      localStorage.setItem('fumigaciones', JSON.stringify(datosConGeometria));
     } else {
       // Usar datos de ejemplo con geometrías
       const ejemplosConArea = FUMIGACIONES_GEOJSON.map((fumigacion) => ({
@@ -451,7 +451,7 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
 
   // Filtrar fumigaciones por estado
   const fumigacionesFiltradas = useMemo(() => {
-    if (filtroEstado === "todos") {
+    if (filtroEstado === 'todos') {
       return fumigaciones;
     }
     return fumigaciones.filter((f) => f.estado === filtroEstado);
@@ -459,7 +459,7 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
 
   // Calcular estadísticas
   const estadisticas = useMemo(() => {
-    const completadas = fumigaciones.filter((f) => f.estado === "completada");
+    const completadas = fumigaciones.filter((f) => f.estado === 'completada');
     const totalHectareas = fumigaciones.reduce(
       (sum, f) => sum + (f.hectareas || 0),
       0
@@ -480,7 +480,7 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
   }, [fumigaciones]);
 
   const getPolygonColor = (estado) => {
-    return ESTADO_COLORES[estado] || "#6c757d";
+    return ESTADO_COLORES[estado] || '#6c757d';
   };
 
   const getCentroid = (geometry) => {
@@ -505,32 +505,32 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
 
         <ControlsContainer>
           <FilterButton
-            active={filtroEstado === "todos"}
-            onClick={() => setFiltroEstado("todos")}
+            active={filtroEstado === 'todos'}
+            onClick={() => setFiltroEstado('todos')}
           >
             <FaEye />
             Todos ({fumigaciones.length})
           </FilterButton>
 
           <FilterButton
-            active={filtroEstado === "completada"}
-            onClick={() => setFiltroEstado("completada")}
+            active={filtroEstado === 'completada'}
+            onClick={() => setFiltroEstado('completada')}
           >
             <FaCheckCircle />
             Completadas
           </FilterButton>
 
           <FilterButton
-            active={filtroEstado === "pendiente"}
-            onClick={() => setFiltroEstado("pendiente")}
+            active={filtroEstado === 'pendiente'}
+            onClick={() => setFiltroEstado('pendiente')}
           >
             <FaClock />
             Pendientes
           </FilterButton>
 
           <FilterButton
-            active={filtroEstado === "en-proceso"}
-            onClick={() => setFiltroEstado("en-proceso")}
+            active={filtroEstado === 'en-proceso'}
+            onClick={() => setFiltroEstado('en-proceso')}
           >
             <GiSpray />
             En Proceso
@@ -542,7 +542,7 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
         <MapContainer
           center={[-34.6037, -58.3816]}
           zoom={12}
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -568,11 +568,11 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
                     weight={3}
                   >
                     <Popup>
-                      <div style={{ minWidth: "250px" }}>
+                      <div style={{ minWidth: '250px' }}>
                         <h3
                           style={{
-                            color: "var(--primary-color)",
-                            margin: "0 0 10px 0",
+                            color: 'var(--primary-color)',
+                            margin: '0 0 10px 0',
                           }}
                         >
                           {fumigacion.titulo ||
@@ -585,7 +585,7 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
                           <strong>Tipo:</strong> {fumigacion.tipo}
                         </p>
                         <p>
-                          <strong>Cultivo:</strong>{" "}
+                          <strong>Cultivo:</strong>{' '}
                           {fumigacion.cultivo ||
                             fumigacion.geometria.properties.cultivo}
                         </p>
@@ -601,16 +601,16 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
                         </p>
                         {fumigacion.efectividad && (
                           <p>
-                            <strong>Efectividad:</strong>{" "}
+                            <strong>Efectividad:</strong>{' '}
                             {fumigacion.efectividad}%
                           </p>
                         )}
                         <div
                           style={{
-                            marginTop: "10px",
-                            padding: "5px",
-                            backgroundColor: "#f5f5f5",
-                            borderRadius: "3px",
+                            marginTop: '10px',
+                            padding: '5px',
+                            backgroundColor: '#f5f5f5',
+                            borderRadius: '3px',
                           }}
                         >
                           <small>
@@ -622,7 +622,7 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
                     </Popup>
                     <Tooltip permanent={false}>
                       {fumigacion.titulo ||
-                        fumigacion.geometria.properties.nombre}{" "}
+                        fumigacion.geometria.properties.nombre}{' '}
                       - {fumigacion.hectareas} ha
                     </Tooltip>
                   </Polygon>
@@ -662,7 +662,7 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
           </LeyendaItem>
 
           <LeyendaItem>
-            <ColorIndicator color={ESTADO_COLORES["en-proceso"]} />
+            <ColorIndicator color={ESTADO_COLORES['en-proceso']} />
             En Proceso
           </LeyendaItem>
 
@@ -673,10 +673,10 @@ const MapaFumigacionesGeoespacial = ({ onBack }) => {
 
           <div
             style={{
-              marginTop: "10px",
-              padding: "5px",
-              fontSize: "0.75rem",
-              color: "#666",
+              marginTop: '10px',
+              padding: '5px',
+              fontSize: '0.75rem',
+              color: '#666',
             }}
           >
             <FaEdit /> Polígonos con áreas reales calculadas

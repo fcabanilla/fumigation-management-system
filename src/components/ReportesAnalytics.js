@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
+import React, { useState, useEffect, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import {
   BarChart,
   Bar,
@@ -15,7 +15,7 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
-} from "recharts";
+} from 'recharts';
 import {
   FaChartBar,
   FaChartLine,
@@ -23,8 +23,8 @@ import {
   FaDownload,
   FaArrowUp,
   FaArrowDown,
-} from "react-icons/fa";
-import { GiSpray, GiPlantSeed } from "react-icons/gi";
+} from 'react-icons/fa';
+import { GiSpray, GiPlantSeed } from 'react-icons/gi';
 
 // Styled Components
 const ReportesContainer = styled.div`
@@ -138,7 +138,7 @@ const MetricCard = styled.div`
   padding: 2rem;
   border-radius: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  border-left: 5px solid ${(props) => props.color || "#4a7c59"};
+  border-left: 5px solid ${(props) => props.color || '#4a7c59'};
   transition: transform 0.3s ease;
 
   &:hover {
@@ -155,8 +155,8 @@ const MetricHeader = styled.div`
 
 const MetricIcon = styled.div`
   font-size: 2rem;
-  color: ${(props) => props.color || "#4a7c59"};
-  background: ${(props) => props.bgColor || "rgba(74, 124, 89, 0.1)"};
+  color: ${(props) => props.color || '#4a7c59'};
+  background: ${(props) => props.bgColor || 'rgba(74, 124, 89, 0.1)'};
   padding: 1rem;
   border-radius: 12px;
 `;
@@ -165,7 +165,7 @@ const MetricTrend = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: ${(props) => (props.positive ? "#4caf50" : "#f44336")};
+  color: ${(props) => (props.positive ? '#4caf50' : '#f44336')};
   font-size: 0.9rem;
   font-weight: 600;
 `;
@@ -224,14 +224,14 @@ const ChartTitle = styled.h3`
 
 // Colores para gráficos
 const COLORS = {
-  primary: "#4a7c59",
-  secondary: "#6b8e23",
-  success: "#4caf50",
-  warning: "#ff9800",
-  error: "#f44336",
-  info: "#2196f3",
-  purple: "#9c27b0",
-  teal: "#009688",
+  primary: '#4a7c59',
+  secondary: '#6b8e23',
+  success: '#4caf50',
+  warning: '#ff9800',
+  error: '#f44336',
+  info: '#2196f3',
+  purple: '#9c27b0',
+  teal: '#009688',
 };
 
 const PIE_COLORS = [
@@ -247,7 +247,7 @@ const PIE_COLORS = [
 // Función para obtener fumigaciones desde localStorage
 const getFumigaciones = () => {
   try {
-    const fumigaciones = localStorage.getItem("fumigaciones");
+    const fumigaciones = localStorage.getItem('fumigaciones');
     return fumigaciones ? JSON.parse(fumigaciones) : [];
   } catch {
     return [];
@@ -257,10 +257,10 @@ const getFumigaciones = () => {
 const ReportesAnalytics = ({ onBack }) => {
   const [fumigaciones, setFumigaciones] = useState([]);
   const [filtros, setFiltros] = useState({
-    fechaInicio: "",
-    fechaFin: "",
-    estado: "TODOS",
-    tipoTratamiento: "TODOS",
+    fechaInicio: '',
+    fechaFin: '',
+    estado: 'TODOS',
+    tipoTratamiento: 'TODOS',
   });
 
   // Cargar fumigaciones al montar
@@ -278,8 +278,8 @@ const ReportesAnalytics = ({ onBack }) => {
 
     setFiltros((prev) => ({
       ...prev,
-      fechaInicio: lastYear.toISOString().split("T")[0],
-      fechaFin: today.toISOString().split("T")[0],
+      fechaInicio: lastYear.toISOString().split('T')[0],
+      fechaFin: today.toISOString().split('T')[0],
     }));
   }, []);
 
@@ -304,13 +304,13 @@ const ReportesAnalytics = ({ onBack }) => {
       }
 
       // Filtro por estado
-      if (filtros.estado !== "TODOS" && fumigacion.estado !== filtros.estado) {
+      if (filtros.estado !== 'TODOS' && fumigacion.estado !== filtros.estado) {
         return false;
       }
 
       // Filtro por tipo de tratamiento
       if (
-        filtros.tipoTratamiento !== "TODOS" &&
+        filtros.tipoTratamiento !== 'TODOS' &&
         fumigacion.tipoTratamiento !== filtros.tipoTratamiento
       ) {
         return false;
@@ -324,7 +324,7 @@ const ReportesAnalytics = ({ onBack }) => {
   const metricas = useMemo(() => {
     const total = fumigacionesFiltradas.length;
     const completadas = fumigacionesFiltradas.filter(
-      (f) => f.estado === "COMPLETADA"
+      (f) => f.estado === 'COMPLETADA'
     ).length;
     const hectareasTotales = fumigacionesFiltradas.reduce(
       (acc, f) => acc + (f.hectareas || 0),
@@ -357,10 +357,10 @@ const ReportesAnalytics = ({ onBack }) => {
       const fecha = new Date(fumigacion.fechaPlanificada);
       const mesKey = `${fecha.getFullYear()}-${String(
         fecha.getMonth() + 1
-      ).padStart(2, "0")}`;
-      const mesLabel = fecha.toLocaleDateString("es-ES", {
-        year: "numeric",
-        month: "short",
+      ).padStart(2, '0')}`;
+      const mesLabel = fecha.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'short',
       });
 
       if (!meses[mesKey]) {
@@ -383,10 +383,10 @@ const ReportesAnalytics = ({ onBack }) => {
   // Datos para gráfico de estados
   const datosEstados = useMemo(() => {
     const estados = {
-      PLANIFICADA: { name: "Planificadas", value: 0, color: COLORS.info },
-      EN_PROCESO: { name: "En Proceso", value: 0, color: COLORS.warning },
-      COMPLETADA: { name: "Completadas", value: 0, color: COLORS.success },
-      CANCELADA: { name: "Canceladas", value: 0, color: COLORS.error },
+      PLANIFICADA: { name: 'Planificadas', value: 0, color: COLORS.info },
+      EN_PROCESO: { name: 'En Proceso', value: 0, color: COLORS.warning },
+      COMPLETADA: { name: 'Completadas', value: 0, color: COLORS.success },
+      CANCELADA: { name: 'Canceladas', value: 0, color: COLORS.error },
     };
 
     fumigacionesFiltradas.forEach((fumigacion) => {
@@ -403,7 +403,7 @@ const ReportesAnalytics = ({ onBack }) => {
     const tipos = {};
 
     fumigacionesFiltradas.forEach((fumigacion) => {
-      const tipo = fumigacion.tipoTratamiento || "Sin especificar";
+      const tipo = fumigacion.tipoTratamiento || 'Sin especificar';
       tipos[tipo] = (tipos[tipo] || 0) + 1;
     });
 
@@ -424,15 +424,15 @@ const ReportesAnalytics = ({ onBack }) => {
     const csvContent = [
       // Headers
       [
-        "Fecha",
-        "Nombre",
-        "Campo",
-        "Tipo",
-        "Estado",
-        "Hectáreas",
-        "Costo",
-        "Responsable",
-      ].join(","),
+        'Fecha',
+        'Nombre',
+        'Campo',
+        'Tipo',
+        'Estado',
+        'Hectáreas',
+        'Costo',
+        'Responsable',
+      ].join(','),
       // Data
       ...fumigacionesFiltradas.map((f) =>
         [
@@ -444,25 +444,25 @@ const ReportesAnalytics = ({ onBack }) => {
           f.hectareas,
           f.costo,
           f.responsable,
-        ].join(",")
+        ].join(',')
       ),
-    ].join("\n");
+    ].join('\n');
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = `reporte-fumigaciones-${
-      new Date().toISOString().split("T")[0]
+      new Date().toISOString().split('T')[0]
     }.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
       minimumFractionDigits: 0,
     }).format(amount);
   };
@@ -485,7 +485,7 @@ const ReportesAnalytics = ({ onBack }) => {
               type="date"
               value={filtros.fechaInicio}
               onChange={(e) =>
-                handleFiltroChange("fechaInicio", e.target.value)
+                handleFiltroChange('fechaInicio', e.target.value)
               }
             />
           </FilterGroup>
@@ -495,7 +495,7 @@ const ReportesAnalytics = ({ onBack }) => {
             <FilterInput
               type="date"
               value={filtros.fechaFin}
-              onChange={(e) => handleFiltroChange("fechaFin", e.target.value)}
+              onChange={(e) => handleFiltroChange('fechaFin', e.target.value)}
             />
           </FilterGroup>
 
@@ -503,7 +503,7 @@ const ReportesAnalytics = ({ onBack }) => {
             <FilterLabel>Estado</FilterLabel>
             <FilterSelect
               value={filtros.estado}
-              onChange={(e) => handleFiltroChange("estado", e.target.value)}
+              onChange={(e) => handleFiltroChange('estado', e.target.value)}
             >
               <option value="TODOS">Todos los estados</option>
               <option value="PLANIFICADA">Planificadas</option>
@@ -518,7 +518,7 @@ const ReportesAnalytics = ({ onBack }) => {
             <FilterSelect
               value={filtros.tipoTratamiento}
               onChange={(e) =>
-                handleFiltroChange("tipoTratamiento", e.target.value)
+                handleFiltroChange('tipoTratamiento', e.target.value)
               }
             >
               <option value="TODOS">Todos los tipos</option>
@@ -611,16 +611,16 @@ const ReportesAnalytics = ({ onBack }) => {
               <YAxis />
               <Tooltip
                 formatter={(value, name) => [
-                  name === "fumigaciones"
+                  name === 'fumigaciones'
                     ? `${value} fumigaciones`
-                    : name === "hectareas"
-                    ? `${value} ha`
-                    : formatCurrency(value),
-                  name === "fumigaciones"
-                    ? "Fumigaciones"
-                    : name === "hectareas"
-                    ? "Hectáreas"
-                    : "Costo",
+                    : name === 'hectareas'
+                      ? `${value} ha`
+                      : formatCurrency(value),
+                  name === 'fumigaciones'
+                    ? 'Fumigaciones'
+                    : name === 'hectareas'
+                      ? 'Hectáreas'
+                      : 'Costo',
                 ]}
               />
               <Legend />
@@ -681,7 +681,7 @@ const ReportesAnalytics = ({ onBack }) => {
               <XAxis dataKey="mes" />
               <YAxis />
               <Tooltip
-                formatter={(value) => [formatCurrency(value), "Costo"]}
+                formatter={(value) => [formatCurrency(value), 'Costo']}
               />
               <Legend />
               <Bar dataKey="costo" fill={COLORS.secondary} />

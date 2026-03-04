@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import styled from "styled-components";
-import { useTheme } from "../contexts/ThemeContext";
-import * as turf from "@turf/turf";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { useTheme } from '../contexts/ThemeContext';
+import * as turf from '@turf/turf';
 import {
   FaEye,
   FaEdit,
@@ -10,8 +10,8 @@ import {
   FaFilter,
   FaMapMarkedAlt,
   FaCalendarAlt,
-} from "react-icons/fa";
-import { GiWheat } from "react-icons/gi";
+} from 'react-icons/fa';
+import { GiWheat } from 'react-icons/gi';
 
 // Styled Components
 const Container = styled.div`
@@ -19,11 +19,11 @@ const Container = styled.div`
 `;
 
 const FilterSection = styled.div`
-  background: ${(props) => props.theme?.colors?.backgroundAccent || "#f8f9fa"};
+  background: ${(props) => props.theme?.colors?.backgroundAccent || '#f8f9fa'};
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  border: 1px solid ${(props) => props.theme?.colors?.border || "#e0e0e0"};
+  border: 1px solid ${(props) => props.theme?.colors?.border || '#e0e0e0'};
 `;
 
 const FilterGrid = styled.div`
@@ -39,11 +39,11 @@ const FilterGrid = styled.div`
 
 const SearchInput = styled.input`
   padding: 0.8rem;
-  border: 1px solid ${(props) => props.theme?.colors?.border || "#ddd"};
+  border: 1px solid ${(props) => props.theme?.colors?.border || '#ddd'};
   border-radius: 8px;
   font-size: 1rem;
-  background: ${(props) => props.theme?.colors?.surface || "white"};
-  color: ${(props) => props.theme?.colors?.text || "#333"};
+  background: ${(props) => props.theme?.colors?.surface || 'white'};
+  color: ${(props) => props.theme?.colors?.text || '#333'};
 
   &:focus {
     outline: none;
@@ -54,27 +54,27 @@ const SearchInput = styled.input`
 
 const FilterSelect = styled.select`
   padding: 0.8rem;
-  border: 1px solid ${(props) => props.theme?.colors?.border || "#ddd"};
+  border: 1px solid ${(props) => props.theme?.colors?.border || '#ddd'};
   border-radius: 8px;
   font-size: 1rem;
-  background: ${(props) => props.theme?.colors?.background || "white"};
-  color: ${(props) => props.theme?.colors?.text || "#000"};
+  background: ${(props) => props.theme?.colors?.background || 'white'};
+  color: ${(props) => props.theme?.colors?.text || '#000'};
   min-width: 150px;
 
   &:focus {
     outline: none;
-    border-color: ${(props) => props.theme?.colors?.primary || "#4a7c59"};
+    border-color: ${(props) => props.theme?.colors?.primary || '#4a7c59'};
     box-shadow: 0 0 0 2px
       ${(props) =>
         props.theme?.colors?.primary
           ? `${props.theme.colors.primary}33`
-          : "rgba(74, 124, 89, 0.2)"};
+          : 'rgba(74, 124, 89, 0.2)'};
   }
 `;
 
 const ClearButton = styled.button`
   padding: 0.8rem 1.5rem;
-  background: ${(props) => props.theme?.colors?.secondary || "#6c757d"};
+  background: ${(props) => props.theme?.colors?.secondary || '#6c757d'};
   color: white;
   border: none;
   border-radius: 8px;
@@ -87,7 +87,7 @@ const ClearButton = styled.button`
     background: ${(props) =>
       props.theme?.colors?.secondary
         ? `${props.theme.colors.secondary}dd`
-        : "#545b62"};
+        : '#545b62'};
   }
 `;
 
@@ -102,9 +102,9 @@ const StatCard = styled.div`
   background: ${(props) =>
     props.theme?.colors?.primary
       ? `linear-gradient(135deg, ${props.theme.colors.primary} 0%, ${
-          props.theme.colors.accent || "#6b8e23"
+          props.theme.colors.accent || '#6b8e23'
         } 100%)`
-      : "linear-gradient(135deg, #4a7c59 0%, #6b8e23 100%)"};
+      : 'linear-gradient(135deg, #4a7c59 0%, #6b8e23 100%)'};
   color: white;
   padding: 1.5rem;
   border-radius: 12px;
@@ -130,9 +130,9 @@ const LotesGrid = styled.div`
 `;
 
 const LoteCard = styled.div`
-  background: ${(props) => props.theme?.colors?.surface || "white"};
+  background: ${(props) => props.theme?.colors?.surface || 'white'};
   border-radius: 12px;
-  border: 1px solid ${(props) => props.theme?.colors?.border || "#e0e0e0"};
+  border: 1px solid ${(props) => props.theme?.colors?.border || '#e0e0e0'};
   overflow: hidden;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -147,17 +147,17 @@ const CardHeader = styled.div`
   background: ${(props) =>
     props.theme?.colors?.background
       ? `linear-gradient(135deg, ${props.theme.colors.background} 0%, ${
-          props.theme.colors.border || "#e9ecef"
+          props.theme.colors.border || '#e9ecef'
         } 100%)`
-      : "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)"};
+      : 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'};
   padding: 1.5rem;
   border-bottom: 1px solid
-    ${(props) => props.theme?.colors?.border || "#e0e0e0"};
+    ${(props) => props.theme?.colors?.border || '#e0e0e0'};
 `;
 
 const CardTitle = styled.h3`
   margin: 0 0 0.5rem 0;
-  color: ${(props) => props.theme?.colors?.primary || "#4a7c59"};
+  color: ${(props) => props.theme?.colors?.primary || '#4a7c59'};
   font-size: 1.2rem;
   display: flex;
   align-items: center;
@@ -166,7 +166,7 @@ const CardTitle = styled.h3`
 
 const CardSubtitle = styled.p`
   margin: 0;
-  color: ${(props) => props.theme?.colors?.textSecondary || "#666"};
+  color: ${(props) => props.theme?.colors?.textSecondary || '#666'};
   font-size: 0.9rem;
 `;
 
@@ -185,17 +185,17 @@ const InfoItem = styled.div``;
 
 const InfoLabel = styled.div`
   font-size: 0.8rem;
-  color: ${(props) => props.theme?.colors?.textSecondary || "#666"};
+  color: ${(props) => props.theme?.colors?.textSecondary || '#666'};
   margin-bottom: 0.2rem;
 `;
 
 const InfoValue = styled.div`
   font-weight: 600;
-  color: ${(props) => props.theme?.colors?.text || "#333"};
+  color: ${(props) => props.theme?.colors?.text || '#333'};
 `;
 
 const AreaInfo = styled.div`
-  background: ${(props) => props.theme?.colors?.background || "#f8f9fa"};
+  background: ${(props) => props.theme?.colors?.background || '#f8f9fa'};
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -205,12 +205,12 @@ const AreaInfo = styled.div`
 const AreaValue = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
-  color: ${(props) => props.theme?.colors?.primary || "#4a7c59"};
+  color: ${(props) => props.theme?.colors?.primary || '#4a7c59'};
 `;
 
 const AreaLabel = styled.div`
   font-size: 0.8rem;
-  color: ${(props) => props.theme?.colors?.textSecondary || "#666"};
+  color: ${(props) => props.theme?.colors?.textSecondary || '#666'};
 `;
 
 const ActionButtons = styled.div`
@@ -233,43 +233,43 @@ const ActionButton = styled.button`
 `;
 
 const ViewButton = styled(ActionButton)`
-  background: ${(props) => props.theme?.colors?.info || "#007bff"};
+  background: ${(props) => props.theme?.colors?.info || '#007bff'};
   color: white;
 
   &:hover {
     background: ${(props) =>
-      props.theme?.colors?.info ? `${props.theme.colors.info}dd` : "#0056b3"};
+      props.theme?.colors?.info ? `${props.theme.colors.info}dd` : '#0056b3'};
   }
 `;
 
 const EditButton = styled(ActionButton)`
-  background: ${(props) => props.theme?.colors?.success || "#28a745"};
+  background: ${(props) => props.theme?.colors?.success || '#28a745'};
   color: white;
 
   &:hover {
     background: ${(props) =>
       props.theme?.colors?.success
         ? `${props.theme.colors.success}dd`
-        : "#1e7e34"};
+        : '#1e7e34'};
   }
 `;
 
 const DeleteButton = styled(ActionButton)`
-  background: ${(props) => props.theme?.colors?.danger || "#dc3545"};
+  background: ${(props) => props.theme?.colors?.danger || '#dc3545'};
   color: white;
 
   &:hover {
     background: ${(props) =>
       props.theme?.colors?.danger
         ? `${props.theme.colors.danger}dd`
-        : "#c82333"};
+        : '#c82333'};
   }
 `;
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 3rem;
-  color: ${(props) => props.theme?.colors?.textSecondary || "#666"};
+  color: ${(props) => props.theme?.colors?.textSecondary || '#666'};
 
   svg {
     font-size: 3rem;
@@ -280,8 +280,8 @@ const EmptyState = styled.div`
 
 const LotesList = ({ lotes, onView, onEdit, onDelete }) => {
   const { theme } = useTheme();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterCultivo, setFilterCultivo] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCultivo, setFilterCultivo] = useState('');
 
   // Filtrar lotes
   const lotesFiltrados = lotes.filter((lote) => {
@@ -324,8 +324,8 @@ const LotesList = ({ lotes, onView, onEdit, onDelete }) => {
   ].filter(Boolean);
 
   const handleClearFilters = () => {
-    setSearchTerm("");
-    setFilterCultivo("");
+    setSearchTerm('');
+    setFilterCultivo('');
   };
 
   const calcularAreaGeometria = (geometria) => {
@@ -407,8 +407,8 @@ const LotesList = ({ lotes, onView, onEdit, onDelete }) => {
           <h3>No se encontraron lotes</h3>
           <p>
             {lotes.length === 0
-              ? "Aún no hay lotes creados"
-              : "No hay lotes que coincidan con los filtros aplicados"}
+              ? 'Aún no hay lotes creados'
+              : 'No hay lotes que coincidan con los filtros aplicados'}
           </p>
         </EmptyState>
       ) : (
@@ -449,7 +449,7 @@ const LotesList = ({ lotes, onView, onEdit, onDelete }) => {
                       <FaMapMarkedAlt /> Estado
                     </InfoLabel>
                     <InfoValue theme={theme}>
-                      {lote.geometria ? "Con geometría" : "Sin geometría"}
+                      {lote.geometria ? 'Con geometría' : 'Sin geometría'}
                     </InfoValue>
                   </InfoItem>
                 </InfoGrid>
@@ -460,7 +460,7 @@ const LotesList = ({ lotes, onView, onEdit, onDelete }) => {
                     Área declarada
                     {lote.geometria && (
                       <span>
-                        {" "}
+                        {' '}
                         | {calcularAreaGeometria(lote.geometria)} ha calculadas
                       </span>
                     )}

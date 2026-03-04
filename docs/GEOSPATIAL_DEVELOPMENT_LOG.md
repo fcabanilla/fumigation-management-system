@@ -133,10 +133,10 @@ const DrawingControls = ({ drawingMode, onPolygonCreate, setDrawingMode }) => {
 
 ```javascript
 const VIEWS = {
-  LIST: "list", // Listado con filtros y búsqueda
-  FORM: "form", // Formulario de creación/edición
-  VIEW: "view", // Vista detallada de solo lectura
-  MAP: "map", // Mapa general con todos los lotes
+  LIST: 'list', // Listado con filtros y búsqueda
+  FORM: 'form', // Formulario de creación/edición
+  VIEW: 'view', // Vista detallada de solo lectura
+  MAP: 'map', // Mapa general con todos los lotes
 };
 ```
 
@@ -167,7 +167,7 @@ const handleBack = () => {
 ```javascript
 // Carga automática de datos de Viale al inicializar
 useEffect(() => {
-  const lotesGuardados = localStorage.getItem("lotes");
+  const lotesGuardados = localStorage.getItem('lotes');
   if (lotesGuardados) {
     setLotes(JSON.parse(lotesGuardados));
   } else {
@@ -188,13 +188,13 @@ useEffect(() => {
 const validateForm = () => {
   const newErrors = {};
 
-  if (!formData.nombre.trim()) newErrors.nombre = "Nombre requerido";
-  if (!formData.cultivo.trim()) newErrors.cultivo = "Cultivo requerido";
+  if (!formData.nombre.trim()) newErrors.nombre = 'Nombre requerido';
+  if (!formData.cultivo.trim()) newErrors.cultivo = 'Cultivo requerido';
   if (!formData.propietario.trim())
-    newErrors.propietario = "Propietario requerido";
+    newErrors.propietario = 'Propietario requerido';
   if (!formData.hectareas || formData.hectareas <= 0)
-    newErrors.hectareas = "Hectáreas debe ser mayor a 0";
-  if (!formData.geometria) newErrors.geometria = "Geometría requerida";
+    newErrors.hectareas = 'Hectáreas debe ser mayor a 0';
+  if (!formData.geometria) newErrors.geometria = 'Geometría requerida';
 
   return newErrors;
 };
@@ -208,7 +208,7 @@ const estadisticas = React.useMemo(() => {
   if (!formData.geometria?.geometry) return null;
 
   const area = turf.area(formData.geometria) / 10000; // Hectáreas
-  const perimetro = turf.length(formData.geometria, { units: "kilometers" });
+  const perimetro = turf.length(formData.geometria, { units: 'kilometers' });
   const vertices = formData.geometria.geometry.coordinates[0].length - 1;
 
   return {
@@ -228,17 +228,17 @@ const estadisticas = React.useMemo(() => {
 const lotesFiltrados = React.useMemo(() => {
   return lotes.filter((lote) => {
     const matchesSearch =
-      searchTerm === "" ||
+      searchTerm === '' ||
       lote.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lote.cultivo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lote.propietario.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCultivo =
-      cultivoFilter === "todos" || lote.cultivo === cultivoFilter;
+      cultivoFilter === 'todos' || lote.cultivo === cultivoFilter;
     const matchesGeometria =
-      geometriaFilter === "todos" ||
-      (geometriaFilter === "con" && lote.geometria) ||
-      (geometriaFilter === "sin" && !lote.geometria);
+      geometriaFilter === 'todos' ||
+      (geometriaFilter === 'con' && lote.geometria) ||
+      (geometriaFilter === 'sin' && !lote.geometria);
 
     return matchesSearch && matchesCultivo && matchesGeometria;
   });
@@ -272,7 +272,7 @@ const estadisticas = React.useMemo(() => {
   }
 
   const area = turf.area(lote.geometria) / 10000; // Hectáreas
-  const perimetro = turf.length(lote.geometria, { units: "kilometers" });
+  const perimetro = turf.length(lote.geometria, { units: 'kilometers' });
   const vertices = lote.geometria.geometry.coordinates[0].length - 1;
 
   return {
@@ -510,7 +510,6 @@ const handleDelete = () => {
 ### ✅ Funcionalidades Implementadas (85%)
 
 1. **MapaEditor Completo**
-
    - ✅ Dibujo de polígonos y rectángulos
    - ✅ Modo readonly para visualización
    - ✅ Cálculos geoespaciales en tiempo real
@@ -518,7 +517,6 @@ const handleDelete = () => {
    - ✅ Zoom automático inteligente
 
 2. **CRUD Lotes Sistema Completo**
-
    - ✅ LoteManager con navegación multi-vista
    - ✅ LoteForm con validación integral
    - ✅ LotesList con filtros y búsqueda
@@ -526,7 +524,6 @@ const handleDelete = () => {
    - ✅ MapaLotes para vista general
 
 3. **Datos y Persistencia**
-
    - ✅ 8 lotes realistas de Viale, Entre Ríos
    - ✅ Coordenadas geográficas auténticas
    - ✅ LocalStorage para testing aislado
@@ -540,12 +537,10 @@ const handleDelete = () => {
 ### 🟡 Pendiente de Implementación (15%)
 
 1. **Selector de Lotes en FumigacionForm**
-
    - ❓ Dropdown para importar geometrías de lotes existentes
    - ❓ Conexión bidireccional entre sistemas CRUD
 
 2. **MapaFumigaciones con Polígonos**
-
    - ❓ Actualizar para mostrar geometrías en lugar de markers puntuales
    - ❓ Cálculos automáticos de área tratada
 
@@ -610,7 +605,7 @@ const handleSubmit = async (e) => {
     await saveData(formData);
     onSuccess();
   } catch (error) {
-    setErrors({ submit: "Error al guardar" });
+    setErrors({ submit: 'Error al guardar' });
   } finally {
     setLoading(false);
   }
@@ -622,20 +617,20 @@ const handleSubmit = async (e) => {
 ```javascript
 // Colores del tema agrícola usados consistentemente
 const theme = {
-  primary: "#4a7c59",
-  secondary: "#6b8e23",
-  success: "#28a745",
-  danger: "#dc3545",
-  background: "linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%)",
+  primary: '#4a7c59',
+  secondary: '#6b8e23',
+  success: '#28a745',
+  danger: '#dc3545',
+  background: 'linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%)',
 };
 
 // Componentes reutilizables
 const ActionButton = styled.button`
   background: ${(props) =>
-    props.variant === "secondary"
-      ? "rgba(255,255,255,0.2)"
-      : "rgba(255,255,255,0.9)"};
-  color: ${(props) => (props.variant === "secondary" ? "white" : "#4a7c59")};
+    props.variant === 'secondary'
+      ? 'rgba(255,255,255,0.2)'
+      : 'rgba(255,255,255,0.9)'};
+  color: ${(props) => (props.variant === 'secondary' ? 'white' : '#4a7c59')};
   // ... estilos consistentes
 `;
 ```
@@ -662,10 +657,10 @@ LoteManager.propTypes = {
 // Manejo defensivo de errores geoespaciales
 try {
   const area = turf.area(geometry) / 10000;
-  const perimetro = turf.length(geometry, { units: "kilometers" });
+  const perimetro = turf.length(geometry, { units: 'kilometers' });
   return { area, perimetro };
 } catch (error) {
-  console.warn("Error en cálculo geoespacial:", error);
+  console.warn('Error en cálculo geoespacial:', error);
   return { area: 0, perimetro: 0 };
 }
 ```
@@ -715,7 +710,6 @@ try {
 ### Prioridad Alta 🔴
 
 1. **Integración FumigacionForm ↔ Lotes**
-
    - Selector dropdown de lotes existentes
    - Importación automática de geometrías
    - Sincronización bidireccional de datos
@@ -728,7 +722,6 @@ try {
 ### Prioridad Media 🟡
 
 1. **Testing y Calidad**
-
    - Tests unitarios para componentes geoespaciales
    - Tests de integración CRUD completo
    - Cobertura mínima del 80%
@@ -759,7 +752,7 @@ try {
 
 ```javascript
 // Nuevo componente MapaViewer.js
-const MapaViewer = ({ geometria, className = "" }) => {
+const MapaViewer = ({ geometria, className = '' }) => {
   // Implementación optimizada para solo lectura
   // Manejo inteligente de zoom basado en área del polígono
   // Error handling robusto con fallbacks
@@ -767,12 +760,10 @@ const MapaViewer = ({ geometria, className = "" }) => {
 ```
 
 1. **Separación de Responsabilidades**:
-
    - **MapaEditor**: Para edición y creación de geometrías
    - **MapaViewer**: Para visualización en modales y previews
 
 2. **Actualizaciones en Componentes**:
-
    - ✅ **LotePreview.js**: Migrado a MapaViewer
    - ✅ **LoteView.js**: Migrado a MapaViewer
    - ✅ **Layout responsive**: Grid mejorado (1fr 1fr en lugar de 1fr 300px)
@@ -788,14 +779,13 @@ const MapaViewer = ({ geometria, className = "" }) => {
 ```javascript
 // Patrón aplicado a todos los styled-components
 const StyledComponent = styled.div`
-  background: ${(props) => props.theme?.colors?.surface || "white"};
-  color: ${(props) => props.theme?.colors?.text || "#000"};
-  border: 1px solid ${(props) => props.theme?.colors?.border || "#e0e0e0"};
+  background: ${(props) => props.theme?.colors?.surface || 'white'};
+  color: ${(props) => props.theme?.colors?.text || '#000'};
+  border: 1px solid ${(props) => props.theme?.colors?.border || '#e0e0e0'};
 `;
 ```
 
 1. **Componentes Actualizados**:
-
    - ✅ **LoteView.js**: 5 styled-components con props de tema + fallbacks
    - ✅ **LotesList.js**: 15+ styled-components integrados con tema
    - ✅ **Cleanup**: Removidos imports no utilizados que causaban warnings ESLint

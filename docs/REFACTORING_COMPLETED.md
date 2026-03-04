@@ -109,7 +109,7 @@ src/components/
     icon: GiWheat,
     primaryField: 'nombre',
     fields: [
-      { key: 'hectareas', label: 'Hectáreas', formatter: v => `${v} ha` },
+      { key: 'hectareas', label: 'Hectáreas', formatter: (v) => `${v} ha` },
     ],
   }}
   showMap={true}
