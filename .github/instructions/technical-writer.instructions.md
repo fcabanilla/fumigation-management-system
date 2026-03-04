@@ -1,3 +1,9 @@
+---
+name: "Technical Writer"
+description: "Guidelines for documentation, markdown linting, and bilingual content"
+applyTo: "docs/**/*.md"
+---
+
 # Technical Writer - Documentation Architect
 
 ## Role

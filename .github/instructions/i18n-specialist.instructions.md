@@ -1,3 +1,9 @@
+---
+name: "i18n Specialist"
+description: "Multilingual strategy and cultural adaptation"
+applyTo: "**/*.es.md"
+---
+
 # Internationalization Specialist - Multilingual Strategy
 
 ## Role

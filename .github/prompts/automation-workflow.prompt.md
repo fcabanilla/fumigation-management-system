@@ -1,3 +1,11 @@
+---
+name: automation
+description: "Design and implement CI/CD automation workflows for developer productivity"
+agent: agent
+argument-hint: "[workflow type: ci|cd|quality|testing]"
+tools: ["edit/editFiles", "edit/createFile"]
+---
+
 # Create Development Automation Workflow
 
 ## Task

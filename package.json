@@ -17,7 +17,7 @@
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
-    "react-router-dom": "^7.9.3",
+    "react-router-dom": "^7.13.1",
     "react-scripts": "5.0.1",
     "recharts": "^3.2.1",
     "styled-components": "^6.1.19",
@@ -29,8 +29,27 @@
     "dev:watch": "nodemon --watch src --ext js,jsx,ts,tsx,css,scss --exec \"npm start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:ci": "react-scripts test --watchAll=false --ci",
     "test:watch": "nodemon --exec \"npm test\"",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint src/ --max-warnings=0",
+    "lint:fix": "eslint src/ --fix --max-warnings=0",
+    "format": "prettier --write \"src/**/*.{js,jsx,json,css,md}\" \"docs/**/*.md\" \"*.{json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,json,css,md}\" \"docs/**/*.md\" \"*.{json,md}\"",
+    "validate": "npm run lint && npm run test:ci && npm run build",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": [
+      "eslint --fix --max-warnings=0",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ],
+    "docs/**/*.md": [
+      "prettier --write"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -51,10 +70,16 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "@eslint/js": "^9.36.0",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "nodemon": "^3.1.10"
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.5.3"
   }
 }

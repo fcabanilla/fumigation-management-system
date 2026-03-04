@@ -1,0 +1,77 @@
+name: CI — Fumig App
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint (zero warnings)
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: lint
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test:ci
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production bundle
+        run: npm run build

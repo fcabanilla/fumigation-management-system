@@ -1,3 +1,11 @@
+---
+name: doc-review
+description: "Review and enhance documentation for clarity, completeness, and agricultural accuracy"
+agent: agent
+argument-hint: "[docs folder or file to review]"
+tools: ["edit/editFiles", "search/codebase", "search", "read/problems"]
+---
+
 # Documentation Review and Enhancement
 
 ## Task

@@ -1,3 +1,9 @@
+---
+name: "DX Engineer"
+description: "CI/CD and automation standards for workflows"
+applyTo: ".github/workflows/**"
+---
+
 # Developer Experience Engineer - Automation & Tooling
 
 ## Role

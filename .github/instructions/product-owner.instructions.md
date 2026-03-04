@@ -1,3 +1,9 @@
+---
+name: "Product Owner"
+description: "Strategic planning and business value alignment"
+applyTo: "docs/official-documentation/**/*.md"
+---
+
 # Product Owner - Strategic Planning & Stakeholder Management
 
 ## Role

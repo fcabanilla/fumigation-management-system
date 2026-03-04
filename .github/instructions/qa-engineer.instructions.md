@@ -1,3 +1,9 @@
+---
+name: "QA Engineer"
+description: "Standards for testing, quality assurance, and zero-warning policy"
+applyTo: "**/*.{test,spec}.js"
+---
+
 # Quality Assurance Engineer - Testing & Validation
 
 ## Role
