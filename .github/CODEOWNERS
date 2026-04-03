@@ -1,0 +1,33 @@
+# CODEOWNERS - Fumig App
+# Global ownership
+* @fcabanilla
+
+# Core application components
+/src/ @fcabanilla
+/src/components/ @fcabanilla
+/src/hooks/ @fcabanilla
+/src/utils/ @fcabanilla
+
+# Configuration files
+package.json @fcabanilla
+tsconfig.json @fcabanilla
+.eslintrc.json @fcabanilla
+.prettierrc.json @fcabanilla
+
+# Documentation
+/docs/ @fcabanilla
+README.md @fcabanilla
+/docs/ARCHITECTURE.md @fcabanilla
+/docs/CONTRIBUTING.md @fcabanilla
+
+# GitHub workflows and templates
+/.github/ @fcabanilla
+
+# Build and deployment
+/build/ @fcabanilla
+/public/ @fcabanilla
+
+# Testing
+**/*.test.js @fcabanilla
+**/*.test.tsx @fcabanilla
+/src/mocks/ @fcabanilla

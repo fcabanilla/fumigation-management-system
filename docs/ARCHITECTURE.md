@@ -59,8 +59,8 @@ const StatCard = ({ icon, value, label, color }) => (
 
 ```javascript
 // Patrón para autenticación
-const withAuth = (WrappedComponent) => {
-  return (props) => {
+const withAuth = WrappedComponent => {
+  return props => {
     const isAuthenticated = useAuth();
     return isAuthenticated ? (
       <WrappedComponent {...props} />
@@ -94,16 +94,16 @@ const [editedUser, setEditedUser] = useState(user || {});
 
 ```javascript
 // Estrategia dual de storage
-const handleLogin = (userData) => {
+const handleLogin = userData => {
   if (userData.rememberMe) {
     // Persistente (30 días)
-    localStorage.setItem("isAuthenticated", "true");
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("sessionExpiration", expirationDate.getTime());
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('sessionExpiration', expirationDate.getTime());
   } else {
     // Temporal (sesión del navegador)
-    sessionStorage.setItem("isAuthenticated", "true");
-    sessionStorage.setItem("user", JSON.stringify(userData));
+    sessionStorage.setItem('isAuthenticated', 'true');
+    sessionStorage.setItem('user', JSON.stringify(userData));
   }
 };
 ```
@@ -126,7 +126,7 @@ const handleLogin = (userData) => {
     />
     <Route
       path="/"
-      element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />}
+      element={<Navigate to={isAuthenticated ? '/dashboard' : '/login'} />}
     />
   </Routes>
 </Router>
@@ -140,6 +140,54 @@ const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
+```
+
+### Flujo de Autenticación E2E
+
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant L as Login Component
+    participant A as App State
+    participant S as Storage API
+    participant D as Dashboard
+
+    Note over U,D: Flujo de Login Exitoso
+    U->>L: Ingresa credenciales
+    L->>L: Validación local (email/username)
+    L->>L: Verificar contraseña
+
+    alt Credenciales válidas
+        L->>A: updateAuthState(userData)
+        A->>S: Persistir sesión
+
+        alt Usuario marcó "Recordarme"
+            S->>S: localStorage.setItem(30 días)
+        else Sesión temporal
+            S->>S: sessionStorage.setItem()
+        end
+
+        A->>A: setIsAuthenticated(true)
+        A->>D: Redirect to Dashboard
+        D->>U: Mostrar panel principal
+    else Credenciales inválidas
+        L->>L: setError("Credenciales incorrectas")
+        L->>U: Mostrar error
+    end
+
+    Note over U,D: Validación de Sesión
+    U->>A: Recarga página/nueva sesión
+    A->>S: Verificar sesión existente
+
+    alt Sesión válida y no expirada
+        S->>A: Retornar userData
+        A->>A: setIsAuthenticated(true)
+        A->>D: Redirect to Dashboard
+    else Sesión expirada/inválida
+        S->>A: Retornar null
+        A->>A: setIsAuthenticated(false)
+        A->>L: Redirect to Login
+    end
 ```
 
 ## Sistema de Componentes
@@ -230,10 +278,10 @@ const Content = styled.main`
 
 // Props dinámicas
 const Button = styled.button`
-  background: ${(props) =>
-    props.variant === "primary" ? "var(--color-primary)" : "transparent"};
-  color: ${(props) =>
-    props.variant === "primary" ? "white" : "var(--color-primary)"};
+  background: ${props =>
+    props.variant === 'primary' ? 'var(--color-primary)' : 'transparent'};
+  color: ${props =>
+    props.variant === 'primary' ? 'white' : 'var(--color-primary)'};
 `;
 ```
 
@@ -258,19 +306,19 @@ const Grid = styled.div`
 
 ```javascript
 // Login.js - Validación en tiempo real
-const validateEmail = (email) => {
+const validateEmail = email => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-const validateUsername = (username) => {
+const validateUsername = username => {
   return username && username.length >= 3;
 };
 
 // Validación dinámica
-const isEmail = formData.username.includes("@");
+const isEmail = formData.username.includes('@');
 if (isEmail && !validateEmail(formData.username)) {
-  setError("Por favor, ingresa un email válido");
+  setError('Por favor, ingresa un email válido');
 }
 ```
 
@@ -278,18 +326,18 @@ if (isEmail && !validateEmail(formData.username)) {
 
 ```javascript
 // Estados de la aplicación
-const [error, setError] = useState("");
+const [error, setError] = useState('');
 const [isLoading, setIsLoading] = useState(false);
-const [success, setSuccess] = useState("");
+const [success, setSuccess] = useState('');
 
 // Manejo de errores async
-const handleSubmit = async (e) => {
+const handleSubmit = async e => {
   try {
     setIsLoading(true);
-    setError("");
+    setError('');
     // ... lógica de login
   } catch (err) {
-    setError("Error de autenticación");
+    setError('Error de autenticación');
   } finally {
     setIsLoading(false);
   }
@@ -302,7 +350,7 @@ const handleSubmit = async (e) => {
 
 ```javascript
 // 1. Lazy Loading (preparado para futuro)
-const LazyDashboard = lazy(() => import("./components/Dashboard"));
+const LazyDashboard = lazy(() => import('./components/Dashboard'));
 
 // 2. Memoización de componentes costosos
 const MemoizedStatCard = React.memo(StatCard);
@@ -313,7 +361,7 @@ const expensiveStats = useMemo(() => {
 }, [data]);
 
 // 4. useCallback para funciones
-const memoizedHandler = useCallback((id) => handleAction(id), [dependency]);
+const memoizedHandler = useCallback(id => handleAction(id), [dependency]);
 ```
 
 ### Bundle Optimization
@@ -322,12 +370,12 @@ const memoizedHandler = useCallback((id) => handleAction(id), [dependency]);
 // Code splitting por rutas
 const routes = [
   {
-    path: "/dashboard",
-    component: lazy(() => import("./pages/Dashboard")),
+    path: '/dashboard',
+    component: lazy(() => import('./pages/Dashboard')),
   },
   {
-    path: "/reports",
-    component: lazy(() => import("./pages/Reports")),
+    path: '/reports',
+    component: lazy(() => import('./pages/Reports')),
   },
 ];
 ```
@@ -338,20 +386,20 @@ const routes = [
 
 ```javascript
 // App.test.js - Test de integración
-describe("App Component", () => {
-  test("renders login when not authenticated", () => {
+describe('App Component', () => {
+  test('renders login when not authenticated', () => {
     render(<App />);
     expect(screen.getByText(/iniciar sesión/i)).toBeInTheDocument();
   });
 });
 
 // Login.test.js - Test de componente
-describe("Login Component", () => {
-  test("validates email format", () => {
+describe('Login Component', () => {
+  test('validates email format', () => {
     // ... test de validación
   });
 
-  test("handles form submission", () => {
+  test('handles form submission', () => {
     // ... test de submit
   });
 });
@@ -361,7 +409,7 @@ describe("Login Component", () => {
 
 ```javascript
 // test-utils.js - Utilidades de testing
-const renderWithRouter = (ui, { initialEntries = ["/"] } = {}) => {
+const renderWithRouter = (ui, { initialEntries = ['/'] } = {}) => {
   return render(<Router initialEntries={initialEntries}>{ui}</Router>);
 };
 ```
@@ -372,13 +420,13 @@ const renderWithRouter = (ui, { initialEntries = ["/"] } = {}) => {
 
 ```javascript
 // 1. Sanitización de datos
-const sanitizeUserInput = (input) => {
+const sanitizeUserInput = input => {
   return DOMPurify.sanitize(input);
 };
 
 // 2. Validación de sesión
 const validateSession = () => {
-  const expiration = localStorage.getItem("sessionExpiration");
+  const expiration = localStorage.getItem('sessionExpiration');
   return expiration && new Date().getTime() < parseInt(expiration);
 };
 
